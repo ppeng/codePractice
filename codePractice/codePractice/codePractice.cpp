@@ -139,15 +139,35 @@ void selectionSort(int arry[], int length)
 	}
 }
 
+//≤Â»Î≈≈–Ú
+void insertSort(int arry[], int length)
+{
+	for (int i = 0; i < length-1; i++)
+	{
+		if (arry[i + 1] < arry[i])
+		{
+			swap(arry[i + 1], arry[i]);
+			for (int j = i; j > 0; j--)
+			{
+				if (arry[j] < arry[j - 1])
+					swap(arry[j], arry[j - 1]);
+			}
+
+		}
+		
+
+	}
+}
 
 
 int main()
 {
 
-	int a[8] = { 1, 3, 2,4,5,2,9,5 };
+	int a[9] = { 1, 3, 2,4,5,2,9,5,0 };
 	//bubbleSort(a,8);
-	selectionSort(a, 8);
-	for (int i = 0; i < 8;i++)
+	//selectionSort(a, 8);
+	insertSort(a, 9);
+	for (int i = 0; i < 9;i++)
 	cout << a[i];
 	return 0;
 
