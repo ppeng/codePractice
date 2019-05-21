@@ -6,3 +6,7 @@
 Thanks.
 
 ![比心](https://i.loli.net/2019/04/09/5cac3d905db04.gif)
+
+--255行：归并排序
+--305行：LEETCODE 168. Excel表列名称
+--401行：小和问题
