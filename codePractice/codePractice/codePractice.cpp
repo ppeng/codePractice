@@ -109,12 +109,12 @@ using namespace std;
 //}
 
 //冒泡排序
-//void swap(int &a, int &b)
-//{
-//	int tem = a;
-//	a = b ;
-//	b = tem;
-//}
+void swap(int &a, int &b)
+{
+	int tem = a;
+	a = b ;
+	b = tem;
+}
 //void bubbleSort(int arry[],int length)
 //{
 //	
@@ -399,50 +399,107 @@ using namespace std;
 
 
 //小和问题
-int merge(int arr[], int L,int mid, int R)
+//int merge(int arr[], int L,int mid, int R)
+//{
+//	//int mid = L + (R - L) >> 1;
+//	int length = R - L + 1;
+//	int *help = new int[R - L + 1];
+//	int i = 0;
+//	int p1 = L;
+//	int p2 = mid+1;
+//	int result = 0;
+//	while ((p1 <= mid) && (p2 <= R))
+//	{
+//		result += arr[p1] < arr[p2] ? arr[p1] * (R - p2 + 1) : 0;
+//		help[i++] = arr[p1] < arr[p2] ? arr[p1++] : arr[p2++];
+//		
+//	}
+//
+//	while (p1 <= mid)
+//	{
+//		help[i++] = arr[p1++];
+//	}
+//	while (p2 <= R)
+//	{
+//		help[i++] = arr[p2++];
+//	}
+//	for (int j = 0; j < length; j++)
+//		arr[L+j] = help[j];
+//	return result;
+//}
+//
+//int sortProcess(int arr[], int L, int R)
+//{
+//	if (L == R)
+//	{
+//		return 0;
+//	}
+//	int mid = L + ((R - L) >> 1);  //注意 >>的优先级低
+//	return sortProcess(arr, L, mid)  //左侧产生的小和加右侧产生的小和加最后左右merge产生的小和
+//	+sortProcess(arr, mid + 1, R)
+//	+merge(arr, L, mid, R);
+//}
+//int main()
+//{
+//	int a[5] = { 1, 0, 3, 4, 5 };
+//	int res;
+//	res=sortProcess(a, 0, 4);
+//	cout << res << endl;
+//}
+
+
+//给定数组arr,给定num,将小于num的数放左边，大于num的数放右边
+
+void process(int arr[], int num,int length)
 {
-	//int mid = L + (R - L) >> 1;
-	int length = R - L + 1;
-	int *help = new int[R - L + 1];
+	int point = -1;
 	int i = 0;
-	int p1 = L;
-	int p2 = mid+1;
-	int result = 0;
-	while ((p1 <= mid) && (p2 <= R))
+	while (i!=length)
 	{
-		result += arr[p1] < arr[p2] ? arr[p1] * (R - p2 + 1) : 0;
-		help[i++] = arr[p1] < arr[p2] ? arr[p1++] : arr[p2++];
-		
+		if (arr[i] <= num)
+		{
+			swap(arr[i], arr[++point]);
+			
+		}
+		i++;
 	}
 
-	while (p1 <= mid)
-	{
-		help[i++] = arr[p1++];
-	}
-	while (p2 <= R)
-	{
-		help[i++] = arr[p2++];
-	}
-	for (int j = 0; j < length; j++)
-		arr[L+j] = help[j];
-	return result;
 }
 
-int sortProcess(int arr[], int L, int R)
+
+
+//荷兰国旗问题
+//注意if-else匹配，防止出错。
+void partition(int arr[], int l, int r,int num)
 {
-	if (L == R)
+	int cur = l;
+	int less = l - 1;
+	int more = r + 1;
+
+	while (cur < more)
 	{
-		return 0;
+		if (arr[cur] < num)
+		{
+			swap(arr[++less], arr[cur++]);
+		}
+		else if (arr[cur] > num)
+		{
+
+			swap(arr[--more], arr[cur]);
+		}
+		else
+		{
+			cur++;
+		}
 	}
-	int mid = L + ((R - L) >> 1);  //注意 >>的优先级低
-	return sortProcess(arr, L, mid)  //左侧产生的小和加右侧产生的小和加最后左右merge产生的小和
-	+sortProcess(arr, mid + 1, R)
-	+merge(arr, L, mid, R);
 }
-int main()
+
+
+void main()
 {
-	int a[5] = { 1, 0, 3, 4, 5 };
-	int res;
-	res=sortProcess(a, 0, 4);
-	cout << res << endl;
+	int a[6] = { 1, 3, 6, 2, 1, 8 };
+	//process(a, 3, 6);
+	partition(a, 0, 5, 3);
+	for (int i = 0; i < 6; i++)
+		cout << a[i];
 }
