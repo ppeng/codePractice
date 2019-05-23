@@ -495,11 +495,58 @@ void partition(int arr[], int l, int r,int num)
 }
 
 
+
+
+//快速排序 AND随机快速排序
+int * partation(int arr[], int L, int R)
+{
+	int less = L - 1;
+	int more = R ; //注意这一行，以最后一个数作为比较的数，大于此数放右边，小于此数放左边
+	int cur = L;
+	int *result = new int[2]; //分配动态数组****
+	while (L < more)
+	{
+		if (arr[L] < arr[R])
+		{
+			swap(arr[++less], arr[L++]);
+		}
+		else if (arr[L]>arr[R])
+		{
+			swap(arr[--more], arr[L]);
+
+		}
+		else
+			L++;
+	}
+	swap(arr[R], arr[more]); //最后需要交换一下最后一个数和右边第一个数。
+
+	result[0] = less+1;    //返回中间数的左右边界
+	result[1] = more;
+	return  result;
+
+}
+
+void quikSort(int arr[], int L, int R)
+{
+	if (L < R)
+	{
+		swap(arr[R], arr[L + (int)(rand() % (R - L + 1)) ]);//随机快排，随机选取一个数为中间位置的数
+		int *P = partation(arr, L, R);
+		quikSort(arr, L, P[0] - 1);
+		quikSort(arr, P[1] + 1, R);
+	}
+}
+
+
+
+
+
+
 void main()
 {
-	int a[6] = { 1, 3, 6, 2, 1, 8 };
+	int a[6] = { 1, 3, 6, 2, 1, 3 };
 	//process(a, 3, 6);
-	partition(a, 0, 5, 3);
+	quikSort(a, 0, 5);
 	for (int i = 0; i < 6; i++)
 		cout << a[i];
 }
