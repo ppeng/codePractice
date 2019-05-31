@@ -538,7 +538,63 @@ void quikSort(int arr[], int L, int R)
 }
 
 
+//堆排序
+ 
+//将一个数插入到数组index位置处并形成大根堆
+void heapInsert(int arr[],int index)
+{
+	//当index=0时，(index-1)/2=0,此时也会停止
+	while (arr[index]>arr[(index - 1) / 2])
+	{
+		swap(arr[index], arr[(index - 1) / 2]);
+		index = (index - 1) / 2;
+	}
+}
 
+//当index位置数值变小时，调整顺序重新变为大根堆
+void heapify(int arr[], int index, int heapsize)
+{
+	int left = index * 2 + 1;
+	while (left < heapsize)
+	{
+		int largest = left + 1 < heapsize && arr[left + 1] > arr[left] 
+			? left + 1 
+			: left;  //判断，左右孩子中较大数的位置。右边不越界并且右边的数大于左边，右边为最大数，否则为左边
+		largest = arr[index]>arr[largest] ? index : largest;//判断index位置改变后是否比左右孩子中最大的数值大
+		if (largest == index)
+		{
+			break;
+		}
+		swap(arr[largest], arr[index]);
+		index = largest;//此时，孩子中最大值已经和父节点交换，此位置发生变化，重复以上过程，使此数组重新调整为大根堆
+		left = index * 2 + 1;
+
+	}
+}
+
+//堆排序，每次将最后一个数和第一个数交换，此时能得到一个最大值，heapsize-1，继续调整重新形成大根堆，重复第一步操作，至
+//全部调整完
+void heapSort(int arr[], int length)
+{
+	//数组建立大根堆
+	for (int i = 0; i < length; i++)
+	{
+		heapInsert(arr, i);
+	}
+
+	//最后位置和头交换，得到一个最大值
+	int heapsize = length;
+	swap(arr[--heapsize], arr[0]);
+	while (heapsize > 0)
+	{
+		heapify(arr, 0, heapsize);
+		swap(arr[--heapsize], arr[0]);
+		
+	}
+
+
+
+}
 
 
 
@@ -546,7 +602,7 @@ void main()
 {
 	int a[6] = { 1, 3, 6, 2, 1, 3 };
 	//process(a, 3, 6);
-	quikSort(a, 0, 5);
+	heapSort(a, 6);
 	for (int i = 0; i < 6; i++)
 		cout << a[i];
 }
