@@ -592,17 +592,159 @@ void heapSort(int arr[], int length)
 		
 	}
 
+}
 
+
+//不基于比较的排序
+//给定一个数组，求如果排序之后，相邻两数的最大差值，要求时
+//间复杂度O(N)，且要求不能用非基于比较的排序
+
+int maxGap(int arr[])
+{
+	return 0;
 
 }
 
 
 
+
+//用数组结构实现大小固定的队列和栈
+//1 栈的实现
+class ArrayStack{
+private:
+	int size;
+	int *arr;
+	int sizeIndex;
+public:
+	ArrayStack(int initSize)
+	{
+		size = initSize;
+		if (size < 0) 
+		{
+			throw "The init size is less than 0!";
+		}
+		arr = new int[initSize];
+		sizeIndex = 0;
+	}
+
+	int StackPeek()//返回栈顶
+	{
+		if (sizeIndex == 0){
+			return NULL;
+		}
+		return arr[sizeIndex - 1];
+
+	}
+	int pop()
+	{
+		if (sizeIndex == 0){
+			throw "The stack is empty!";
+		}
+		return arr[--sizeIndex];
+
+	}
+
+	void push(int obj)
+	{
+		if (sizeIndex == size)
+		{
+			throw "The stack is full!";
+
+		}
+		arr[sizeIndex++] = obj;
+	}
+
+};
+
+//队列的实现 队列先进先出
+class ArrayQueue{
+private:
+	int size;
+	int sizeIndex;
+	int start;//指向队列头部
+	int end;//指向队列的尾部，即新数据加入的位置
+	int *arr;
+public:
+	ArrayQueue(int initSize)
+	{
+		size = initSize;
+		if (size < 0)
+		{
+			throw "The init size is less than 0!";
+		}
+		sizeIndex = 0;
+		arr = new int[initSize];
+		start = 0;
+		end = 0;
+	}
+	//返回队列第一个数
+	int peek()
+	{
+		if (size == 0)
+		{
+			return NULL;
+		}
+		return arr[start];
+	}
+
+	void push(int obj)
+	{
+		if (sizeIndex==size)
+		{
+			throw "The queue is full!";
+
+		}
+		sizeIndex++;
+		arr[end] = obj;
+		end = end == size - 1 ? 0 : end + 1;
+
+	}
+
+	int poll() //弹出一个数
+	{
+		if (sizeIndex == 0)
+		{
+			throw "The queue is empty!";
+
+		}
+		sizeIndex--;
+		int temp = start;
+		start = start == size - 1 ? 0 : start + 1;
+		return arr[temp];
+
+	}
+
+
+
+};
+
 void main()
 {
-	int a[6] = { 1, 3, 6, 2, 1, 3 };
-	//process(a, 3, 6);
-	heapSort(a, 6);
-	for (int i = 0; i < 6; i++)
-		cout << a[i];
+	
+	//int a[6] = { 1, 3, 6, 2, 1, 3 };
+	////process(a, 3, 6);
+	//heapSort(a, 6);
+	//for (int i = 0; i < 6; i++)
+	//	cout << a[i];
+	ArrayStack myStack(5);
+	ArrayQueue myQueue(5);
+	myStack.push(1);
+	myStack.push(2);
+	myStack.push(3);
+	myStack.push(4);
+	myStack.push(5);
+	myQueue.push(1);
+	myQueue.push(2);
+	myQueue.push(3);
+	myQueue.push(4);
+	myQueue.push(5);
+	//myStack.push(5);
+	for (int i = 0; i < 5; i++)
+	{
+		cout << myStack.pop() << endl;
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		cout << myQueue.poll() << endl;
+	}
 }
