@@ -144,40 +144,40 @@ void swap(int &a, int &b)
 //}
 //
 ////≤Â»Î≈≈–Ú
-//void insertSort(int arry[], int length)
-//{
-//	for (int i = 0; i < length-1; i++)
-//	{
-//		if (arry[i + 1] < arry[i])
-//		{
-//			swap(arry[i + 1], arry[i]);
-//			for (int j = i; j > 0; j--)
-//			{
-//				if (arry[j] < arry[j - 1])
-//					swap(arry[j], arry[j - 1]);
-//			}
-//
-//		}
-//		
-//
-//	}
-//}
+void insertSort(int arry[], int length)
+{
+	for (int i = 0; i < length-1; i++)
+	{
+		if (arry[i + 1] < arry[i])
+		{
+			swap(arry[i + 1], arry[i]);
+			for (int j = i; j > 0; j--)
+			{
+				if (arry[j] < arry[j - 1])
+					swap(arry[j], arry[j - 1]);
+			}
+
+		}
+		
+
+	}
+}
 //
 ////≤Â»Î≈≈–ÚII
-//void insertSortII(int arry[], int length)
-//
-//{
-//	for (int i = 1; i < length; i++)
-//	{
-//		for (int j = i - 1; j >= 0 && (arry[j] > arry[j + 1]);j--)
-//		{
-//			swap(arry[j + 1], arry[j]);
-//		}
-//	}
-//
-//
-//
-//}
+void insertSortII(int arry[], int length)
+
+{
+	for (int i = 1; i < length; i++)
+	{
+		for (int j = i - 1; j >= 0 && (arry[j] > arry[j + 1]);j--)
+		{
+			swap(arry[j + 1], arry[j]);
+		}
+	}
+
+
+
+}
 //
 //
 //int main()
@@ -253,45 +253,45 @@ void swap(int &a, int &b)
 
 
 //πÈ≤¢≈≈–Ú
-//void merge(int arry[], int L, int mid, int R)
-//{
-//	int length = R - L + 1;
-//	int p1 = L;
-//	int p2 = mid + 1;
-//	int i = 0;
-//	int *a=new int[R-L+1];
-//	while ((p1 <= mid)&&(p2 <= R))
-//	{
-//		a[i++] = arry[p1] < arry[p2] ? arry[p1++] : arry[p2++];
-//		
-//	}
-//	while (p1<=mid)
-//	{
-//		a[i++] = arry[p1++];
-//	}
-//	while (p2 <= R)
-//	{
-//		a[i++] = arry[p2++];
-//	}
-//	for (int i = 0; i < length; i++)
-//	{
-//		arry[L+i] = a[i];
-//	}
-//
-//
-//}
-//void sortProcess(int arry[], int L,int R)
-//{
-//	if (L == R)
-//	{
-//		return;
-//	}
-//	int mid = (L + R) / 2;
-//	sortProcess(arry, L, mid);
-//	sortProcess(arry, mid + 1, R);
-//	merge(arry, L, mid, R);
-//
-//}
+void merge(int arry[], int L, int mid, int R)
+{
+	int length = R - L + 1;
+	int p1 = L;
+	int p2 = mid + 1;
+	int i = 0;
+	int *a=new int[R-L+1];
+	while ((p1 <= mid)&&(p2 <= R))
+	{
+		a[i++] = arry[p1] < arry[p2] ? arry[p1++] : arry[p2++];
+		
+	}
+	while (p1<=mid)
+	{
+		a[i++] = arry[p1++];
+	}
+	while (p2 <= R)
+	{
+		a[i++] = arry[p2++];
+	}
+	for (int i = 0; i < length; i++)
+	{
+		arry[L+i] = a[i];
+	}
+
+
+}
+void sortProcess(int arry[], int L,int R)
+{
+	if (L == R)
+	{
+		return;
+	}
+	int mid = (L + R) / 2;
+	sortProcess(arry, L, mid);
+	sortProcess(arry, mid + 1, R);
+	merge(arry, L, mid, R);
+
+}
 //int main()
 //{
 //	int a[5] = { 1, 5, 3, 4, 7 };
