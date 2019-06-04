@@ -6,6 +6,7 @@
 #include<cassert>
 #include <string>
 #include <stack>
+#include <queue>
 #include <sstream>
 
 using namespace std;
@@ -714,37 +715,219 @@ public:
 
 	}
 
-
-
 };
 
-void main()
+//void main()
+//{
+//	
+//	//int a[6] = { 1, 3, 6, 2, 1, 3 };
+//	////process(a, 3, 6);
+//	//heapSort(a, 6);
+//	//for (int i = 0; i < 6; i++)
+//	//	cout << a[i];
+//	ArrayStack myStack(5);
+//	ArrayQueue myQueue(5);
+//	myStack.push(1);
+//	myStack.push(2);
+//	myStack.push(3);
+//	myStack.push(4);
+//	myStack.push(5);
+//	myQueue.push(1);
+//	myQueue.push(2);
+//	myQueue.push(3);
+//	myQueue.push(4);
+//	myQueue.push(5);
+//	//myStack.push(5);
+//	for (int i = 0; i < 5; i++)
+//	{
+//		cout << myStack.pop() << endl;
+//	}
+//	for (int i = 0; i < 5; i++)
+//	{
+//		cout << myQueue.poll() << endl;
+//	}
+//}
+
+
+
+//实现一个特殊的栈，在实现栈的基本功能的基础上，再实现返
+//回栈中最小元素的操作。
+//要求：时间复杂度都是O（1）
+//使用现有的stack结构
+
+//解决方案：使用两个stack,一个存放正常数据，另一个存放当前栈中的
+//最小值，出栈时，两个栈顶同时出栈，得到当前栈中的最小值
+
+class MinStack
 {
-	
-	//int a[6] = { 1, 3, 6, 2, 1, 3 };
-	////process(a, 3, 6);
-	//heapSort(a, 6);
-	//for (int i = 0; i < 6; i++)
-	//	cout << a[i];
-	ArrayStack myStack(5);
-	ArrayQueue myQueue(5);
-	myStack.push(1);
-	myStack.push(2);
-	myStack.push(3);
-	myStack.push(4);
-	myStack.push(5);
-	myQueue.push(1);
-	myQueue.push(2);
-	myQueue.push(3);
-	myQueue.push(4);
-	myQueue.push(5);
-	//myStack.push(5);
-	for (int i = 0; i < 5; i++)
+private:
+	stack<int>sData;
+	stack<int>sMin;
+public:
+	void push(int data)
 	{
-		cout << myStack.pop() << endl;
+		if (sData.empty())
+		{
+			sData.push(data);
+			sMin.push(data);
+		}
+		else if (data < sMin.top())
+		{
+			sData.push(data);
+			sMin.push(data);
+
+		}
+		else
+		{
+			sData.push(data);
+			sMin.push(sMin.top());//如果入栈数据不是最小值，smin栈顶仍为最小值，复制一份，保持两栈size相同
+		}
 	}
-	for (int i = 0; i < 5; i++)
+	void pop()
 	{
-		cout << myQueue.poll() << endl;
+		sData.pop();
+		sMin.pop();
 	}
+	int min()
+	{
+		return sMin.top();
+	}
+};
+
+
+//int main()
+//{
+//	MinStack mystack;
+//	mystack.push(5);
+//	mystack.push(3);
+//	mystack.push(2);
+//	mystack.push(1);
+//	cout<<mystack.min()<<endl;
+//	mystack.pop();
+//	cout << mystack.min() << endl;
+//
+//}
+
+
+
+//仅用队列实现栈结构
+
+class queueStack{
+private:
+	queue<int>Data;
+	queue<int>Help;
+public:
+	/*queueStack()
+	{
+
+
+	}*/
+	//入栈
+	void pushQueueStack(int data)
+	{
+		Data.push(data);
+	}
+	//出栈
+	int popQueueStack()
+	{
+		while (Data.size() > 1)//Data栈中只剩下一个数的时候停止，返回剩下的最后一个数即为stack的弹出的第一个数
+		{
+			Help.push(Data.front());
+			Data.pop();
+		}
+		int res = Data.front();
+		Data.pop();
+		swapQueue();//指针交换，DATA和Help交换
+		return res;
+	}
+	//显示栈顶元素
+	int peekQueueStack()
+	{
+		while (Data.size() > 1)//Data栈中只剩下一个数的时候停止，返回剩下的最后一个数即为stack的弹出的第一个数
+		{
+			Help.push(Data.front());
+			Data.pop();
+		}
+		int res = Data.front();
+		Help.push(res);
+		Data.pop();
+		swapQueue();//指针交换，DATA和Help交换
+		return res;
+
+	}
+
+	//指针交换
+	void swapQueue()
+	{
+		queue<int>tmp = Help;
+		Help = Data;
+		Data = tmp;
+
+	}
+};
+
+//int main()
+//{
+//	queueStack myStack;
+//	myStack.pushQueueStack(5);
+//	myStack.pushQueueStack(4);
+//	myStack.pushQueueStack(3);
+//	myStack.pushQueueStack(2);
+//	myStack.pushQueueStack(1);
+//	cout << myStack.peekQueueStack() << endl;
+//	myStack.popQueueStack();
+//	cout << myStack.peekQueueStack() << endl;
+//
+//}
+
+
+//仅用队列实现栈结构
+//两个栈push栈和pop栈
+//原则1：一次将push里的数转移到pop
+//原则2：pop里如果有数，不能转移
+class stackQueue
+{
+private:
+	stack<int>stackPush;
+	stack<int>stackPop;
+public:
+	void pushStackQueue(int data)
+	{
+		stackPush.push(data);
+	}
+
+	int popStackQueue()
+	{
+		if (stackPush.empty() && stackPop.empty())
+		{
+			throw "The queue is empty!";
+		}
+		else if (stackPop.empty())//只有pop为空时才可以一次性将push的数转移到pop
+		{
+			while (!stackPush.empty())
+			{
+				stackPop.push(stackPush.top());//全部转移
+				stackPush.pop();//出栈
+			}
+		}
+		int res = stackPop.top();
+		stackPop.pop();
+		return res;
+	}
+};
+
+int main()
+{
+	stackQueue mystackQueue;
+	mystackQueue.pushStackQueue(1);
+	mystackQueue.pushStackQueue(2);
+	mystackQueue.pushStackQueue(3);
+	mystackQueue.pushStackQueue(4);
+	cout << mystackQueue.popStackQueue() << endl;
+	cout << mystackQueue.popStackQueue() << endl;
+	mystackQueue.pushStackQueue(5);
+	mystackQueue.pushStackQueue(6);
+	cout << mystackQueue.popStackQueue() << endl;
+
+
 }
