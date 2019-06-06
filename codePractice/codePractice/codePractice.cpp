@@ -1040,15 +1040,73 @@ public:
 	}
 };
 
+//给定一个矩阵matrix，按照“之”字形的方式打印这 个矩阵
+//分析 A B两点从头出发，A向右，到头后向下，B向下，到头后向右，每走一步将两点连接经过的数就是需要打印的数
+//需要一个flag标记向下打印还是向上打印
+
+class ZigZigPrintMatrix{
+public:
+	void printMatrixZigZig(vector<vector<int>>matrix)
+	{
+		int ar = 0;//A B两点都从（0，0）出发
+		int ac = 0;
+		int br = 0;
+		int bc = 0;
+		int endR = matrix.size()-1;
+		int endC = matrix[0].size()-1;
+		bool fromUp = false;//记录方向,是否从上到下打印
+		while (ar != endR+1)
+		{
+			printLevel(matrix, ar, ac, br, bc, fromUp);
+			ar = (ac == endC ? ar+1 : ar);//A点向右走，如果到了最右边，则保持列不变，向下走
+			ac = (ac == endC ? ac : ac+1);
+			//注意 BC BR的先后顺序，不能颠倒
+			bc = (br == endR ? bc + 1 : bc);
+			br = (br == endR ? br : br+1);
+			fromUp = !fromUp;
+		}
+
+	}
+
+	void printLevel(vector<vector<int>>matrix, int ar, int ac, int br, int bc, bool flag)
+	{
+		if (flag)
+		{
+			while (ar != br + 1)
+			{
+				cout << matrix[ar++][ac--] << " ";
+			}
+
+		}
+		else
+		{
+			while (br != ar -1)
+			{
+				cout << matrix[br--][bc++] << " ";
+			}
+		}
+
+	}
+
+
+
+};
+
+
+
+
+
 
 int main()
 {
-	vector<vector<int>>matrix = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 }, { 13,14,15,16 } };
+	vector<vector<int>>matrix = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
 	printMatrixSpiralOrder print;
 	//print.SpiralOrderPrint(matrix);
 	rotateMatrix test;
-	test.printMatrix(matrix);
+	/*test.printMatrix(matrix);
 	test.rotate(matrix);
-	test.printMatrix(matrix);
+	test.printMatrix(matrix);*/
+	ZigZigPrintMatrix zigMatrix;
+	zigMatrix.printMatrixZigZig(matrix);
 
 }
