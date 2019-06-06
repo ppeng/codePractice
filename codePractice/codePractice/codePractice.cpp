@@ -916,18 +916,85 @@ public:
 	}
 };
 
+//int main()
+//{
+//	stackQueue mystackQueue;
+//	mystackQueue.pushStackQueue(1);
+//	mystackQueue.pushStackQueue(2);
+//	mystackQueue.pushStackQueue(3);
+//	mystackQueue.pushStackQueue(4);
+//	cout << mystackQueue.popStackQueue() << endl;
+//	cout << mystackQueue.popStackQueue() << endl;
+//	mystackQueue.pushStackQueue(5);
+//	mystackQueue.pushStackQueue(6);
+//	cout << mystackQueue.popStackQueue() << endl;
+//
+//
+//}
+
+//给定一个整型矩阵matrix，请按照转圈的方式打印它
+//分析：可按圈打印，给出左上和右下角位置信息，每次打印一圈的数。
+
+class printMatrixSpiralOrder{
+public:
+	void SpiralOrderPrint(vector<vector<int>> my_matrix)
+	{
+		int TR = 0;//左上角行
+		int TC = 0;//左上角列
+		int DR = my_matrix.size() - 1;//右下角行
+		int DC = my_matrix[0].size() - 1;//右下角列
+		while ((TR <= DR)&&(TC <= DC))
+		{
+			printEdge(my_matrix, TR, DR, TC, DC);
+			TR++;
+			TC++;
+			DR--;
+			DC--;
+
+		}
+	}
+	void printEdge(vector<vector<int>> matrix, int TR, int DR, int TC, int DC)
+	{
+		if (TR == DR)
+		{
+			for (int i = TC; i <= DC; i++)
+				cout << matrix[TR][i] << " ";
+		}
+		else if (TC == DC)
+		{
+			for (int i = TR; i < DR; i++)
+				cout << matrix[i][TC] << " ";
+		}
+		else
+		{
+			int currC = TC;
+			int currR = TR;
+			while (currC != DC)
+			{
+				cout << matrix[TR][currC] << " ";
+				currC++;
+			}
+			while (currR != DR)
+			{
+				cout << matrix[currR][DC] << " ";
+				currR++;
+			}
+			while (currC != TC)
+			{
+				cout << matrix[DR][currC] << " ";
+				currC--;
+			}
+			while (currR != TR)
+			{
+				cout << matrix[currR][TC] << " ";
+				currR--;
+			}
+		}
+	}
+};
 int main()
 {
-	stackQueue mystackQueue;
-	mystackQueue.pushStackQueue(1);
-	mystackQueue.pushStackQueue(2);
-	mystackQueue.pushStackQueue(3);
-	mystackQueue.pushStackQueue(4);
-	cout << mystackQueue.popStackQueue() << endl;
-	cout << mystackQueue.popStackQueue() << endl;
-	mystackQueue.pushStackQueue(5);
-	mystackQueue.pushStackQueue(6);
-	cout << mystackQueue.popStackQueue() << endl;
-
-
+	vector<vector<int>>matrix = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
+	printMatrixSpiralOrder print;
+	print.SpiralOrderPrint(matrix);
 }
