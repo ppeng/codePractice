@@ -1097,16 +1097,65 @@ public:
 
 
 
+//int main()
+//{
+//	vector<vector<int>>matrix = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
+//	printMatrixSpiralOrder print;
+//	//print.SpiralOrderPrint(matrix);
+//	rotateMatrix test;
+//	/*test.printMatrix(matrix);
+//	test.rotate(matrix);
+//	test.printMatrix(matrix);*/
+//	ZigZigPrintMatrix zigMatrix;
+//	zigMatrix.printMatrixZigZig(matrix);
+//
+//}
+
+//在行列都排好序的矩阵中找数 
+// 时间复杂度为O(N+M)，额外空间复杂度为O(1)。
+
+class findMaxSortedMatrix{
+public:
+	bool findMax(vector<vector<int>>matrix,int k)
+	{
+		int lengthR = matrix.size();
+		int lengthC = matrix[0].size();
+		int currR = 0;
+		int currC = lengthC - 1;
+		while ((currR != lengthR) || (currC != -1))
+		{
+			if (matrix[currR][currC] == k)
+			{
+				return true;
+			}
+			else if (matrix[currR][currC] > k)
+			{
+				currC--;
+			}
+			else
+			{
+				currR++;
+			}
+		}
+		return false;
+
+	}
+};
+
 int main()
 {
-	vector<vector<int>>matrix = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
-	printMatrixSpiralOrder print;
-	//print.SpiralOrderPrint(matrix);
-	rotateMatrix test;
-	/*test.printMatrix(matrix);
-	test.rotate(matrix);
-	test.printMatrix(matrix);*/
-	ZigZigPrintMatrix zigMatrix;
-	zigMatrix.printMatrixZigZig(matrix);
+	findMaxSortedMatrix findMax;
+	vector<vector<int>>matrix = { { 0, 1, 2, 3, 4, 5, 6 },// 0
+	{ 10, 12, 13, 15, 16, 17, 18 },// 1
+	{ 23, 24, 25, 26, 27, 28, 29 },// 2
+	{ 44, 45, 46, 47, 48, 49, 50 },// 3
+	{ 65, 66, 67, 68, 69, 70, 71 },// 4
+	{ 96, 97, 98, 99, 100, 111, 122 },// 5
+	{ 166, 176, 186, 187, 190, 195, 200 },// 6
+	{ 233, 243, 321, 341, 356, 370, 380 } // 7
+	};
+	int K = 233;
+	cout<<findMax.findMax(matrix, K)<<endl;
+
 
 }
