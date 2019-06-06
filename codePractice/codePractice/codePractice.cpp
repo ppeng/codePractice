@@ -992,9 +992,63 @@ public:
 		}
 	}
 };
+
+//给定一个整型正方形矩阵matrix，请把该矩阵调整成
+//顺时针旋转90度的样子。额外空间复杂度O(1)
+//分析：和上题类似，由外向内，分圈调整，先调整外圈，再调整内圈。
+//每圈的调整方法相同，使用rotateEdge()函数可以计算出对应位置，直接调整。
+
+class rotateMatrix{
+public:
+	void rotate(vector<vector<int>> &matrix)  //按圈调整，先调整外圈，再调整内圈
+	{
+		int TR = 0;
+		int TC = 0;
+		int DR = matrix.size() - 1;//得到行数
+		int DC = matrix[0].size() - 1;//得到列数
+		while (TR < DR)
+		{
+			rotateEdge(matrix, TR++, TC++, DR--, DC--);//注意TR TC加，DR,DC减
+		}
+	}
+
+	void rotateEdge(vector<vector<int>>&matrix,int TR, int TC, int DR, int DC) //仔细算一下位置。。。。。。
+	{
+		int times = DC - TC;
+		int tmp = 0;
+		for (int i = 0; i != times; i++)
+		{
+			tmp = matrix[TR][TC + i];
+			matrix[TR][TC + i] = matrix[DR - i][TC];
+			matrix[DR - i][TC] = matrix[DR][DC - i];
+			matrix[DR][DC - i] = matrix[TR + i][DC];
+			matrix[TR + i][DC] = tmp;
+		}
+	}
+	void printMatrix(vector<vector<int>>&matrix)
+	{
+		int row = matrix.size();
+		int column = matrix[0].size();
+		for (int i = 0; i != row; i++)
+		{
+			for (int j = 0; j != column; j++)
+			{
+				cout << matrix[i][j] << " ";
+			}
+			cout << endl;
+		}
+	}
+};
+
+
 int main()
 {
-	vector<vector<int>>matrix = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
+	vector<vector<int>>matrix = { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 }, { 13,14,15,16 } };
 	printMatrixSpiralOrder print;
-	print.SpiralOrderPrint(matrix);
+	//print.SpiralOrderPrint(matrix);
+	rotateMatrix test;
+	test.printMatrix(matrix);
+	test.rotate(matrix);
+	test.printMatrix(matrix);
+
 }
