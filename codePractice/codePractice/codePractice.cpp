@@ -1111,8 +1111,9 @@ public:
 //
 //}
 
-//在行列都排好序的矩阵中找数 
+//在行列都排好序的矩阵中找数k 
 // 时间复杂度为O(N+M)，额外空间复杂度为O(1)。
+//分析：从右上角出发，如果比K大,向左移动，否则向下移动
 
 class findMaxSortedMatrix{
 public:
@@ -1142,20 +1143,170 @@ public:
 	}
 };
 
+//int main()
+//{
+//	findMaxSortedMatrix findMax;
+//	vector<vector<int>>matrix = { { 0, 1, 2, 3, 4, 5, 6 },// 0
+//	{ 10, 12, 13, 15, 16, 17, 18 },// 1
+//	{ 23, 24, 25, 26, 27, 28, 29 },// 2
+//	{ 44, 45, 46, 47, 48, 49, 50 },// 3
+//	{ 65, 66, 67, 68, 69, 70, 71 },// 4
+//	{ 96, 97, 98, 99, 100, 111, 122 },// 5
+//	{ 166, 176, 186, 187, 190, 195, 200 },// 6
+//	{ 233, 243, 321, 341, 356, 370, 380 } // 7
+//	};
+//	int K = 233;
+//	cout<<findMax.findMax(matrix, K)<<endl;
+//}
+
+
+//给定一个链表的头节点head，请判断该链表是否为回文结构
+
+struct ListNode {
+	int val;
+	struct ListNode* next;
+	ListNode(int x) :
+		val(x), next(nullptr) {
+	}
+};
+
+class IsPalindromeList{
+public:
+	//方法一：将所有节点的value装入栈中，依次出栈，原数据即变为反方向，对比是否相等
+	//需要n的额外空间
+	bool isPalindromel1(ListNode* head)
+	{
+		stack <int> stack;
+		ListNode* cur = head;
+		while (cur != nullptr)
+		{
+			stack.push(cur->val);
+			cur = cur->next;
+		}
+		while (head != nullptr)
+		{
+			if (head->val != stack.top())
+				return false;
+			else
+			{
+				head = head->next;
+				stack.pop();
+			}
+		}
+		return true;
+	}
+
+
+	//方法二：两个指针，一个快指针一次走两步一个慢指针一次走一步，快指针走到终点的时候慢指针走到中点
+	//从中点位置开始入栈，再出栈，依次和从头开始的节点比较是否相等
+	//需要额外空间：n/2
+	bool isPalindromel2(ListNode* head)
+	{
+		if (head == nullptr || head->next == nullptr)
+		{
+			return true;
+		}
+
+		stack<int>my_node_value;
+		ListNode *slowNode = head->next;
+		ListNode *fastNode = head;
+		while (fastNode->next != nullptr&&fastNode->next->next != nullptr){
+			slowNode = slowNode->next;
+			fastNode = fastNode->next->next;
+		}
+		while (slowNode != nullptr){
+			my_node_value.push(slowNode->val);
+			slowNode = slowNode->next;
+		}
+		while (!my_node_value.empty()){
+			if (head->val != my_node_value.top()){
+				return false;
+				break;
+			}
+			else{
+				head = head->next;
+				my_node_value.pop();
+			}
+		}
+		return true;
+	}
+
+
+	//方法三：两个指针，一个快指针一次走两步一个慢指针一次走一步，快指针走到终点的时候慢指针走到中点
+	//从中间开始分为两段，将后一段指针改变方向，改为由后指向前
+	//两段都是从前向后开始比较
+	//额外空间复杂度：O（1）
+	bool isPalindromel3(ListNode* head){
+		if (head == nullptr || head->next == nullptr){
+			return true;
+		}
+
+		ListNode *n1 = head;//慢指针
+		ListNode *n2 = head;//快指针
+		while (n2->next != nullptr&&n2->next->next != nullptr){
+			n1 = n1->next;
+			n2 = n2->next->next;
+		}//n1此时指向中点，n2指向末尾
+		n2 = n1->next;  //n2为后半段的第一个节点
+		n1->next = nullptr;  //n1的next为空
+		ListNode *n3 = nullptr;
+		while (n2 != nullptr){//改变后半段的指针方向
+			n3 = n2->next;
+			n2->next = n1;
+			n1 = n2;
+			n2 = n3;
+		}
+		n3 = n1;//此时，n1为整个链表中最后一个位置，赋给n3
+		n2 = head;//n2为头
+		while (n1 != nullptr&&n2 != nullptr){
+			if (n1->val != n2->val){//比较是否相等
+				return false;
+				break;
+			}
+			else{
+				n1 = n1->next;
+				n2 = n2->next;
+			}
+		}
+		//复位 将后半段方向复原
+		n1 = n3->next;
+		n3->next = nullptr;//最后一个位置，next为null
+		while (n1 != nullptr){
+			n2 = n1->next;
+			n1->next = n3;
+			n3 = n1;
+			n1 = n2;
+		}
+		return true;
+
+
+	}
+
+};
+
+void printList(ListNode* pHead) {
+	while (pHead != nullptr) {
+		std::cout << pHead->val << ",";
+		pHead = pHead->next;
+	}
+	std::cout << "\n";
+}
+
+
 int main()
 {
-	findMaxSortedMatrix findMax;
-	vector<vector<int>>matrix = { { 0, 1, 2, 3, 4, 5, 6 },// 0
-	{ 10, 12, 13, 15, 16, 17, 18 },// 1
-	{ 23, 24, 25, 26, 27, 28, 29 },// 2
-	{ 44, 45, 46, 47, 48, 49, 50 },// 3
-	{ 65, 66, 67, 68, 69, 70, 71 },// 4
-	{ 96, 97, 98, 99, 100, 111, 122 },// 5
-	{ 166, 176, 186, 187, 190, 195, 200 },// 6
-	{ 233, 243, 321, 341, 356, 370, 380 } // 7
-	};
-	int K = 233;
-	cout<<findMax.findMax(matrix, K)<<endl;
-
-
+	ListNode* pHead = new ListNode(1);
+	pHead->next = new ListNode(2);
+	pHead->next->next = new ListNode(4);
+	std::cout << "origin list is:" << std::endl;
+	printList(pHead);
+	IsPalindromeList List;
+	bool is_palindrome = List.isPalindromel3(pHead);
+	if (is_palindrome) {
+		std::cout << "is palindrome" << std::endl;
+	}
+	else {
+		std::cout << "not palindrome" << std::endl;
+	}
+	return 0;
 }
