@@ -1165,8 +1165,11 @@ public:
 struct ListNode {
 	int val;
 	struct ListNode* next;
-	ListNode(int x) :
-		val(x), next(nullptr) {
+	ListNode()=default;//默认构造函数要加上default
+	//一旦我们定义了其他类型的构造函数，我们必须定义一个默认的构造函数，否则类将没有默认构造函数。
+	ListNode(int x) {//其他形式构造函数
+		val = x;
+		next = nullptr;
 	}
 };
 
@@ -1293,20 +1296,156 @@ void printList(ListNode* pHead) {
 }
 
 
+//int main()
+//{
+//	ListNode* pHead = new ListNode(1);
+//	pHead->next = new ListNode(2);
+//	pHead->next->next = new ListNode(4);
+//	std::cout << "origin list is:" << std::endl;
+//	printList(pHead);
+//	IsPalindromeList List;
+//	bool is_palindrome = List.isPalindromel3(pHead);
+//	if (is_palindrome) {
+//		std::cout << "is palindrome" << std::endl;
+//	}
+//	else {
+//		std::cout << "not palindrome" << std::endl;
+//	}
+//	return 0;
+//}
+
+
+//将单向链表按某值划分成左边小、中间相等、右边大的形式
+class SmallerEqualBigger{
+public:
+	void swapList(ListNode *a, ListNode *b){
+		int tmp = a->val;
+		a->val = b->val;
+		b->val = tmp;
+
+	}
+
+	//方法一：将链表装入数组，分为三部分后再重新连接形成新链表
+	//缺点：打破数据的稳定性
+	ListNode* listPartition1(ListNode* head, int pivot){
+		if (head == nullptr){
+			return NULL;
+		}
+		ListNode *cur = head;
+		int length = 0;
+		while (cur != nullptr){//统计链表的长度
+			length++;
+			cur = cur->next;
+		}
+		cur = head;
+		ListNode *nodeArr = new ListNode[length];
+		for (int j = 0; j < length; j++){//将所有链表数据存入数组
+			nodeArr[j] = *cur;
+			cur = cur->next;
+		}
+		arrPartition(nodeArr, length,pivot); //将数组中的数据按val的大小分为三部分
+		//将分好的数据重新连接
+		for (int i = 1; i != length; i++){
+			nodeArr[i - 1].next = &nodeArr[i];
+		}
+		nodeArr[length - 1].next = nullptr;
+		return nodeArr;
+	}
+
+	void arrPartition(ListNode *arr,int length, int pivot)
+	{
+		int small = -1;
+		int big = length;
+		int index = 0;
+		while (index != big){
+			if (arr[index].val < pivot){
+				swapList(&arr[index++], &arr[++small]);
+			}
+			else if (arr[index].val == pivot){
+				index++;
+			}
+			else{
+				swapList(&arr[index], &arr[--big]);
+			}
+		}
+
+	}
+
+	ListNode* listPartition2(ListNode* head, int pivot){
+		ListNode *sH = nullptr;//小于区域的头small head
+		ListNode *sT = nullptr;//小于区域的尾部small tail
+		ListNode *eH = nullptr;//等于区域
+		ListNode *eT = nullptr;
+		ListNode *bH = nullptr;//大于区域
+		ListNode *bT = nullptr;
+		while (head != nullptr){
+			ListNode *next = head->next;
+			head->next = nullptr;
+			if (head->val < pivot){
+				if (sH == nullptr){
+					sH = head;
+					sT = head;
+				}
+				else{
+					sT->next = head;
+					sT = head;
+				}
+				
+			}
+			else if (head->val == pivot){
+				if (eH == nullptr){
+					eH = head;
+					eT = head;
+				}
+				else{
+					eT->next = head;
+					eT = head;
+				}
+			}
+			else
+			{
+				if (bH == nullptr){
+					bH = head;
+					bT = head;
+				}
+				else{
+					bT->next = head;
+					bT = head;
+				}
+			}
+			head = next;
+		}
+		if (sT != nullptr){//小段连接相等段
+			sT->next = eH;//eh可以为空
+			eT = (nullptr == eT ? sT : eT);//保证et不能为空，因为它要连接下一段
+		}
+		if (eT != nullptr){//相等段连接大段
+			eT->next = bH;//bh可以为空
+		}
+		return sH != nullptr ? sH : eH != nullptr ? eH : bH;//返回不为空的部分的头节点 sh eh或bh
+	}
+
+
+
+
+
+
+};
+
 int main()
 {
 	ListNode* pHead = new ListNode(1);
+	ListNode* result;
 	pHead->next = new ListNode(2);
 	pHead->next->next = new ListNode(4);
+	pHead->next->next->next= new ListNode(3);
+	pHead->next->next->next->next = new ListNode(0);
+	pHead->next->next->next->next->next = new ListNode(5);
 	std::cout << "origin list is:" << std::endl;
 	printList(pHead);
-	IsPalindromeList List;
-	bool is_palindrome = List.isPalindromel3(pHead);
-	if (is_palindrome) {
-		std::cout << "is palindrome" << std::endl;
-	}
-	else {
-		std::cout << "not palindrome" << std::endl;
-	}
-	return 0;
+	SmallerEqualBigger test;
+	pHead=test.listPartition2(pHead, 6);
+	std::cout << "new list is:" << std::endl;
+	printList(pHead);
+
 }
