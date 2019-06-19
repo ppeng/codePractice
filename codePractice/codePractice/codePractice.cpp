@@ -8,8 +8,11 @@
 #include <stack>
 #include <queue>
 #include <sstream>
+#include <hash_map>
+#include<unordered_map>
 
 using namespace std;
+using namespace stdext;
 
 //T1 虚函数使用 链接：https://www.nowcoder.com/questionTerminal/3cea911c23a043ae96f0767d42bfa4f2
 
@@ -1434,20 +1437,158 @@ public:
 
 };
 
+//int main()
+//{
+//	ListNode* pHead = new ListNode(1);
+//	ListNode* result;
+//	pHead->next = new ListNode(2);
+//	pHead->next->next = new ListNode(4);
+//	pHead->next->next->next= new ListNode(3);
+//	pHead->next->next->next->next = new ListNode(0);
+//	pHead->next->next->next->next->next = new ListNode(5);
+//	std::cout << "origin list is:" << std::endl;
+//	printList(pHead);
+//	SmallerEqualBigger test;
+//	pHead=test.listPartition2(pHead, 6);
+//	std::cout << "new list is:" << std::endl;
+//	printList(pHead);
+//
+//}
+
+
+//复制含有随机指针节点的链表
+struct specialListNode{
+//public:
+	int value;
+	specialListNode *next;
+	specialListNode *rand;
+	specialListNode() = default; //默认构造函数
+	specialListNode(int x):
+		value(x),next(nullptr),rand(nullptr) {}    //构造函数初始值列表
+};
+
+////使用hash_map所需要的hash函数
+//struct hash_Node{
+//	 size_t operator() (const specialListNode &node) const{
+//		return node.value;
+//	}
+// };
+//
+////使用hash_map所需要的比较函数
+//struct compare_Node{
+//	    bool operator() (const specialListNode &n1, const specialListNode &n2) const{
+//		         return n1.value == n2.value && n1.next == n2.next && n1.rand == n2.rand;
+//		}
+//};
+
+
+class CopyListWithRandom{
+public:
+	void printRandLinkedList(specialListNode* head){
+		specialListNode *cur = head;
+		cout << "order:" << endl;
+		while (cur != nullptr){
+			cout << cur->value << " ";
+			cur = cur->next;
+		
+		}
+		cout << endl;
+		cur = head;
+		cout << "rand:" << endl;
+		while (cur != nullptr){
+			if (cur->rand == nullptr){
+				cout << "-" << " ";
+			}
+			else
+				cout << cur->rand->value<<" ";
+			
+			cur = cur->next;
+		
+		}
+		cout << endl;
+
+	}
+
+
+	specialListNode* copyListWithRand1(specialListNode* head){
+		unordered_map<specialListNode*, specialListNode*> map;
+		specialListNode *cur = head;
+		while (cur != nullptr){
+			specialListNode *ptr=new specialListNode;
+			ptr->value = cur->value;
+			ptr->next = nullptr;
+			ptr->rand = nullptr;
+			map[cur] = ptr;//对应关系
+			//map.insert(make_pair(cur, ptr));
+			cur = cur->next;
+		}
+		cur = head;
+		while (cur != nullptr){
+			map[cur]->next = map[cur->next]; //map[cur]指的是cur' .cur'的next就是cur->next对应的（cur->next）'即map[cur->next]  画个图即明白
+			map[cur]->rand = map[cur->rand];
+			cur = cur->next;
+		}
+		return map[head];
+	}
+
+	//注意画图理解
+	specialListNode* copyListWithRand2(specialListNode* head){
+		specialListNode *cur = head;
+		specialListNode *next = nullptr;
+		while (cur != nullptr){//将所有节点拷贝，并按1-1‘-2-2’3-3‘的顺序连接
+			next = cur->next;
+			specialListNode *newNode = new specialListNode;
+			cur->next = newNode;
+			newNode->value = cur->value;
+			newNode->next = next;
+			newNode->rand = nullptr;
+			cur = next;
+		}
+
+		cur = head;
+		specialListNode *curCopy = new specialListNode;
+		while (cur != nullptr){//设置拷贝节点的rand      rand关系：1-3-3’从而找到1‘->rand 为3’
+			next = cur->next->next;
+			curCopy = cur->next;
+			curCopy->rand = cur->rand!=nullptr?cur->rand->next:nullptr;
+			cur = next;
+			
+		}
+		specialListNode *res = head->next;
+		cur = head;
+		while (cur != nullptr){//设置拷贝节点的naxt,分离两条链表
+			next = cur->next->next;
+			curCopy = cur->next;
+			cur->next = next;
+			curCopy->next = curCopy->next == nullptr ? nullptr : next->next;
+			cur = next;
+		}
+		return res;
+
+	}
+
+
+};
+
 int main()
 {
-	ListNode* pHead = new ListNode(1);
-	ListNode* result;
-	pHead->next = new ListNode(2);
-	pHead->next->next = new ListNode(4);
-	pHead->next->next->next= new ListNode(3);
-	pHead->next->next->next->next = new ListNode(0);
-	pHead->next->next->next->next->next = new ListNode(5);
-	std::cout << "origin list is:" << std::endl;
-	printList(pHead);
-	SmallerEqualBigger test;
-	pHead=test.listPartition2(pHead, 6);
-	std::cout << "new list is:" << std::endl;
-	printList(pHead);
+	specialListNode *head = NULL;
 
+	head = new specialListNode(1);
+	head->next = new specialListNode(2);
+	head->next->next = new specialListNode(3);
+	head->next->next->next = new specialListNode(4);
+	head->next->next->next->next = new specialListNode(5);
+	head->next->next->next->next->next = new specialListNode(6);
+
+	head->rand = head->next->next->next->next->next; // 1 -> 6
+	head->next->rand = head->next->next->next->next->next; // 2 -> 6
+	head->next->next->rand = head->next->next->next->next; // 3 -> 5
+	head->next->next->next->rand = head->next->next; // 4 -> 3
+	head->next->next->next->next->rand = nullptr; // 5 -> null
+	head->next->next->next->next->next->rand = head->next->next->next; // 6 -> 4
+	CopyListWithRandom test;
+	test.printRandLinkedList(head);
+	head=test.copyListWithRand2(head);
+	test.printRandLinkedList(head);
 }
