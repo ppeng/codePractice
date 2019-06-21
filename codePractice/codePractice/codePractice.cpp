@@ -1570,25 +1570,230 @@ public:
 
 };
 
+//int main()
+//{
+//	specialListNode *head = NULL;
+//
+//	head = new specialListNode(1);
+//	head->next = new specialListNode(2);
+//	head->next->next = new specialListNode(3);
+//	head->next->next->next = new specialListNode(4);
+//	head->next->next->next->next = new specialListNode(5);
+//	head->next->next->next->next->next = new specialListNode(6);
+//
+//	head->rand = head->next->next->next->next->next; // 1 -> 6
+//	head->next->rand = head->next->next->next->next->next; // 2 -> 6
+//	head->next->next->rand = head->next->next->next->next; // 3 -> 5
+//	head->next->next->next->rand = head->next->next; // 4 -> 3
+//	head->next->next->next->next->rand = nullptr; // 5 -> null
+//	head->next->next->next->next->next->rand = head->next->next->next; // 6 -> 4
+//	CopyListWithRandom test;
+//	test.printRandLinkedList(head);
+//	head=test.copyListWithRand2(head);
+//	test.printRandLinkedList(head);
+//}
+
+
+//单链表可能有环也可能无环。给定两个单链表的头节点 head1 和 head2，
+//这两个单链表可能相交也可能不相交。请实现一个函数，如果两个链表相交，请返回相交的第一个节点；如果不相交，返回 NULL。
+
+
+ //分析 此问题拆分为三步  
+//1 判断一个链表有无环  方法一：将节点放入map，每次有新的节点查询map中以前是否出现此节点。
+//方法二 快慢指针，每次分别走两步和一步，最后相遇则为有环
+
+
+//2 判断两个无环链表相交 方法一：链表1所有节点放入map 查询map中有没有链表2的节点 
+//方法二：统计链表1和2 的长度和最后一个节点， 如果最后一个节点相等一定相交。因为单链表，相交的位置是同一个节点，指向的next也是相同，所以相交节点以后的位置都是相等的
+//长的减短的：n=length1-length2，长的先走n步，短的再走，找到第一个相交的节点。或者使用map
+
+//有环和无环单链表不可能相交
+
+
+
+//3 判断两个有环链表相交：loop1 2为第一二个链表的入环节点  各自成环--不相交(loop1!=loop2)   先相交，共享一个环（loop1==loop2）--相当于无环链表找相交节点问题    
+//两个链表共同组成一个环 （loop1!=loop2） 解决办法：loop1一直往下走，循环完一遍没有碰到loop2 此时为情况1：各自成环 不相交
+//
+
+class FindFirstIntersectNode{
+public:
+	ListNode* getIntersectNode(ListNode *head1, ListNode *head2){
+		if (head1 == nullptr || head2 == nullptr){
+			return NULL;
+		}
+		ListNode *loop1=getLoopNode(head1);
+		ListNode *loop2=getLoopNode(head2);
+
+		if (loop1 ==NULL&&loop2==NULL){//没有入环节点判断相交
+			return noLoop(head1, head2);
+		}
+
+		if (loop1 != NULL&&loop2 != NULL){//两个链表都有入环节点
+			return bothLoop(head1, loop1, head2, loop2);
+		}
+		return NULL;//如果一个有环，一个无环，不可能相交
+	}
+
+
+
+	//得到入环节点  方法原理不知道 结果正确 归纳总结出来的 记住
+	ListNode*  getLoopNode(ListNode *head){//快慢指针，分别一次走一步和两步，最后相遇说明有环
+		if (head == nullptr || head->next == nullptr||head->next->next==nullptr){
+			return nullptr;
+		}
+		ListNode *slow = head->next;
+		ListNode *fast = head->next->next;
+		while (fast != slow){//直到快慢指针相遇
+			if (fast->next != nullptr && fast->next->next != nullptr){//这个条件很重要，一定别写错了
+				fast = fast->next->next;//快指针一次走两步
+				slow = slow->next;
+			}
+			else
+				return nullptr;
+
+		}
+		fast = head;//快指针从头开始，慢指针从相遇位置开始，都一次走一步
+		while (fast != slow){  //再次相遇的位置就是入环点
+			fast = fast->next;
+			slow = slow->next;
+		}
+		return slow;
+
+	}
+
+	//都没有入环节点，判断相交
+	ListNode* noLoop(ListNode *head1, ListNode *head2){
+		int length1 = 0;//记录两个链表的长度
+		int length2 = 0;
+		
+		ListNode *cur1 = head1;
+		ListNode *cur2 = head2;
+		while (cur1->next != nullptr){//得到length1和end1
+			length1++;
+			
+			cur1= cur1->next;
+		}
+		
+		while (cur2->next != nullptr){//得到length2和end2
+			length2++;
+		
+			cur2 = cur2->next;
+
+		}
+		if (cur1 != cur2){//如果两链表尾不相等，说明不相交
+			return nullptr;
+
+		}
+		else{//如果两个链表结尾内存地址相等说明两链表有相交点，查找相交点 
+			int n = length1 >= length2 ? length1 - length2 : length2 - length1;//得到两链表长度的差值
+			cur1 = length1 > length2 ? head1 : head2;//cur1指向长度长的链表
+			cur2 = cur1 == head1 ? head2 : head1;
+			while (n != 0){//长的链表先走n步
+				n--;
+				cur1 = cur1->next;
+			}
+			while (cur1 != cur2){//然后同时走 找到两链表相等的节点
+
+				cur1 = cur1->next;
+				cur2 = cur2->next;
+			}
+			return cur1;
+
+		}
+	}
+
+
+	//都有入环节点，判断相交函数
+	//都有入环节点有三种可能
+	ListNode* bothLoop(ListNode *head1, ListNode *loop1, ListNode *head2, ListNode *loop2){
+		ListNode *cur1 = head1;
+		ListNode *cur2 = head2;
+		if (loop1 == loop2){//如果两个入环节点相等，说明两链表为同一个环，和上边没有环的判断方法相同,此时两链表end相等
+			int n = 0;
+			while (cur1 != loop1){//注意条件
+				n++;
+				cur1=cur1->next ;
+			}
+			while (cur2 != loop2){
+				n--;
+				cur2=cur2->next;
+			}
+			cur1 = n > 0 ? head1 : head2;
+			cur2 = cur1 == head1 ? head2 : head1;
+			n = abs(n);
+			while (n != 0){
+				n--;
+				cur1 = cur1->next;
+			}
+			while (cur1 != cur2){
+				cur1 = cur1->next;
+				cur2 = cur2->next;
+			}
+			return cur1;
+		}
+		
+		else{//loop1和loop2不相等，有两种可能：完全没交点；两链表共同组成环。loop1在环内遍历，看能否找到loop2
+			cur1 = loop1->next;
+			while (cur1 != loop1){
+				if (cur1 == loop2){
+					return cur1;//返回交点
+				}
+				cur1 = cur1->next;
+			}
+			return nullptr;//没有交点
+		}
+
+	}
+
+};
+
 int main()
 {
-	specialListNode *head = NULL;
+	FindFirstIntersectNode test;
+	ListNode *result;
 
-	head = new specialListNode(1);
-	head->next = new specialListNode(2);
-	head->next->next = new specialListNode(3);
-	head->next->next->next = new specialListNode(4);
-	head->next->next->next->next = new specialListNode(5);
-	head->next->next->next->next->next = new specialListNode(6);
+	// 1->2->3->4->5->6->7->null
+	ListNode *head1 = new ListNode(1);
+	head1->next = new ListNode(2);
+	head1->next->next = new ListNode(3);
+	head1->next->next->next = new ListNode(4);
+	head1->next->next->next->next = new ListNode(5);
+	head1->next->next->next->next->next = new ListNode(6);
+	head1->next->next->next->next->next->next = new ListNode(7);
 
-	head->rand = head->next->next->next->next->next; // 1 -> 6
-	head->next->rand = head->next->next->next->next->next; // 2 -> 6
-	head->next->next->rand = head->next->next->next->next; // 3 -> 5
-	head->next->next->next->rand = head->next->next; // 4 -> 3
-	head->next->next->next->next->rand = nullptr; // 5 -> null
-	head->next->next->next->next->next->rand = head->next->next->next; // 6 -> 4
-	CopyListWithRandom test;
-	test.printRandLinkedList(head);
-	head=test.copyListWithRand2(head);
-	test.printRandLinkedList(head);
+	// 0->9->8->6->7->null
+	ListNode *head2 = new ListNode(0);
+	head2->next = new ListNode(9);
+	head2->next->next = new ListNode(8);
+	head2->next->next->next = head1->next->next->next->next->next; // 8->6
+	result = test.getIntersectNode(head1, head2);
+	cout << result->val<<endl;
+	
+
+	// 1->2->3->4->5->6->7->4->->->
+	head1 = new ListNode(1);
+	head1->next = new ListNode(2);
+	head1->next->next = new ListNode(3);
+	head1->next->next->next = new ListNode(4);
+	head1->next->next->next->next = new ListNode(5);
+	head1->next->next->next->next->next = new ListNode(6);
+	head1->next->next->next->next->next->next = new ListNode(7);
+	head1->next->next->next->next->next->next = head1->next->next->next; // 7->4
+
+	// 0->9->8->2->->->
+	head2 = new ListNode(0);
+	head2->next = new ListNode(9);
+	head2->next->next = new ListNode(8);
+	head2->next->next->next = head1->next; // 8->2
+	result = test.getIntersectNode(head1, head2);
+	cout << result->val<<endl;
+
+	// 0->9->8->6->4->5->6->->
+	head2 = new ListNode(0);
+	head2->next = new ListNode(9);
+	head2->next->next = new ListNode(8);
+	head2->next->next->next = head1->next->next->next->next->next; // 8->6
+	result = test.getIntersectNode(head1, head2);
+	cout << result->val<<endl;
+
 }
