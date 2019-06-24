@@ -1624,7 +1624,7 @@ public:
 		ListNode *loop1=getLoopNode(head1);
 		ListNode *loop2=getLoopNode(head2);
 
-		if (loop1 ==NULL&&loop2==NULL){//没有入环节点判断相交
+		if (loop1 ==NULL&&loop2==NULL){//没有入环节点判断相交点
 			return noLoop(head1, head2);
 		}
 
@@ -1766,7 +1766,7 @@ int main()
 	head2->next = new ListNode(9);
 	head2->next->next = new ListNode(8);
 	head2->next->next->next = head1->next->next->next->next->next; // 8->6
-	result = test.getIntersectNode(head1, head2);
+	result = test.getIntersectNode(head1, head2);//无环链表交点
 	cout << result->val<<endl;
 	
 
@@ -1785,7 +1785,7 @@ int main()
 	head2->next = new ListNode(9);
 	head2->next->next = new ListNode(8);
 	head2->next->next->next = head1->next; // 8->2
-	result = test.getIntersectNode(head1, head2);
+	result = test.getIntersectNode(head1, head2); //有相同环链表交点
 	cout << result->val<<endl;
 
 	// 0->9->8->6->4->5->6->->
@@ -1793,7 +1793,7 @@ int main()
 	head2->next = new ListNode(9);
 	head2->next->next = new ListNode(8);
 	head2->next->next->next = head1->next->next->next->next->next; // 8->6
-	result = test.getIntersectNode(head1, head2);
+	result = test.getIntersectNode(head1, head2);//共同组成环
 	cout << result->val<<endl;
 
 }
