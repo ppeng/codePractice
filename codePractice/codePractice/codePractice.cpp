@@ -1747,53 +1747,55 @@ public:
 
 };
 
-int main()
-{
-	FindFirstIntersectNode test;
-	ListNode *result;
+//int main()
+//{
+//	FindFirstIntersectNode test;
+//	ListNode *result;
+//
+//	// 1->2->3->4->5->6->7->null
+//	ListNode *head1 = new ListNode(1);
+//	head1->next = new ListNode(2);
+//	head1->next->next = new ListNode(3);
+//	head1->next->next->next = new ListNode(4);
+//	head1->next->next->next->next = new ListNode(5);
+//	head1->next->next->next->next->next = new ListNode(6);
+//	head1->next->next->next->next->next->next = new ListNode(7);
+//
+//	// 0->9->8->6->7->null
+//	ListNode *head2 = new ListNode(0);
+//	head2->next = new ListNode(9);
+//	head2->next->next = new ListNode(8);
+//	head2->next->next->next = head1->next->next->next->next->next; // 8->6
+//	result = test.getIntersectNode(head1, head2);//无环链表交点
+//	cout << result->val<<endl;
+//	
+//
+//	// 1->2->3->4->5->6->7->4->->->
+//	head1 = new ListNode(1);
+//	head1->next = new ListNode(2);
+//	head1->next->next = new ListNode(3);
+//	head1->next->next->next = new ListNode(4);
+//	head1->next->next->next->next = new ListNode(5);
+//	head1->next->next->next->next->next = new ListNode(6);
+//	head1->next->next->next->next->next->next = new ListNode(7);
+//	head1->next->next->next->next->next->next = head1->next->next->next; // 7->4
+//
+//	// 0->9->8->2->->->
+//	head2 = new ListNode(0);
+//	head2->next = new ListNode(9);
+//	head2->next->next = new ListNode(8);
+//	head2->next->next->next = head1->next; // 8->2
+//	result = test.getIntersectNode(head1, head2); //有相同环链表交点
+//	cout << result->val<<endl;
+//
+//	// 0->9->8->6->4->5->6->->
+//	head2 = new ListNode(0);
+//	head2->next = new ListNode(9);
+//	head2->next->next = new ListNode(8);
+//	head2->next->next->next = head1->next->next->next->next->next; // 8->6
+//	result = test.getIntersectNode(head1, head2);//共同组成环
+//	cout << result->val<<endl;
+//
+//}
 
-	// 1->2->3->4->5->6->7->null
-	ListNode *head1 = new ListNode(1);
-	head1->next = new ListNode(2);
-	head1->next->next = new ListNode(3);
-	head1->next->next->next = new ListNode(4);
-	head1->next->next->next->next = new ListNode(5);
-	head1->next->next->next->next->next = new ListNode(6);
-	head1->next->next->next->next->next->next = new ListNode(7);
 
-	// 0->9->8->6->7->null
-	ListNode *head2 = new ListNode(0);
-	head2->next = new ListNode(9);
-	head2->next->next = new ListNode(8);
-	head2->next->next->next = head1->next->next->next->next->next; // 8->6
-	result = test.getIntersectNode(head1, head2);//无环链表交点
-	cout << result->val<<endl;
-	
-
-	// 1->2->3->4->5->6->7->4->->->
-	head1 = new ListNode(1);
-	head1->next = new ListNode(2);
-	head1->next->next = new ListNode(3);
-	head1->next->next->next = new ListNode(4);
-	head1->next->next->next->next = new ListNode(5);
-	head1->next->next->next->next->next = new ListNode(6);
-	head1->next->next->next->next->next->next = new ListNode(7);
-	head1->next->next->next->next->next->next = head1->next->next->next; // 7->4
-
-	// 0->9->8->2->->->
-	head2 = new ListNode(0);
-	head2->next = new ListNode(9);
-	head2->next->next = new ListNode(8);
-	head2->next->next->next = head1->next; // 8->2
-	result = test.getIntersectNode(head1, head2); //有相同环链表交点
-	cout << result->val<<endl;
-
-	// 0->9->8->6->4->5->6->->
-	head2 = new ListNode(0);
-	head2->next = new ListNode(9);
-	head2->next->next = new ListNode(8);
-	head2->next->next->next = head1->next->next->next->next->next; // 8->6
-	result = test.getIntersectNode(head1, head2);//共同组成环
-	cout << result->val<<endl;
-
-}

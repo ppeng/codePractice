@@ -32,5 +32,8 @@
     <ClCompile Include="codePractice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="codePractice2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
