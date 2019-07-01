@@ -495,9 +495,113 @@ bool isB(Node *head){
 
 
 
-//搜索二叉树
+//搜索二叉树 每个节点比它左子树的任意节点大，而且比它右子树的任意节点小
+//二叉树中序遍历结果若为升序，则为搜索二叉树
+
+void findLeft(Node *head, stack<Node*>*s){
+	s->push(head);
+	while (head->left != nullptr){
+		s->push(head->left);
+		head = head->left;
+	}
+
+}
+bool isBst(Node *head){
+	if (head == nullptr){
+		return false ;
+	}
+	int min = INT_MIN;
+	stack<Node*>s;
+	Node *cur=head;
+	s.push(head);
+	while (cur->left != nullptr){
+		s.push(cur->left);
+		cur = cur->left;
+	}
+	while (!s.empty()){
+		cur = s.top();
+		s.pop();
+		if (cur->value > min)
+		{
+			min = cur->value;
+		}
+		else
+		{
+			return false;//如果后边的数小于前边的数，返回false
+		}
+		if (cur->right != nullptr){
+			findLeft(cur->right,&s);
+			
+		}
+	}
+	return true;
+
+}
+
+
+//int main()
+//{
+//	PrintBT test;
+//	Node *head = new Node(5);
+//	head->left = new Node(3);
+//	head->right = new Node(8);
+//	head->left->left = new Node(2);
+//	head->left->right = new Node(4);
+//	head->left->left->left = new Node(1);
+//	head->right->left = new Node(7);
+//	head->right->left->left = new Node(6);
+//	head->right->right = new Node(10);
+//	head->right->right->left = new Node(9);
+//	head->right->right->right = new Node(11);
+//	cout<<isBst(head);
+//}
 
 
 
+//完全二叉树(Complete Binary Tree)： 若设二叉树的深度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边
+//如果当前节点有右孩子没有左孩子，直接返回false
+//如果当前节点只有左孩子，那么之后所有的节点都为叶节点（度为零的节点），否则返回false
 
+bool isCBT(Node *head){
+	queue<Node*>q;
+	q.push(head);
+	bool leaf = false;//第二种情况的标志。如果只有左孩子，没有右孩子，则下面的所有节点都不能有任何孩子
+	while (!q.empty()){
+		head = q.front();
+		q.pop();
+		if (head->left == nullptr&&head->right != nullptr){//如果只有右节点没有左节点，返回false
+			return false;
+		}
+		if (leaf && (head->left != nullptr || head->right != nullptr)){//如果发生了第二种情况，但是左右孩子有一个不是空
+			return false;
+		}
+		if (head->left != nullptr){
+			q.push(head->left);
+		}
+		if (head->right != nullptr){
+			q.push(head->right);
+		}
+		else{//如果右孩子等于空，则标志置为true
+			leaf = true;
+		}
+	}
+	return true;
+}
+
+int main()
+{
+	PrintBT test;
+	Node *head = new Node(5);
+	head->left = new Node(3);
+	head->right = new Node(8);
+	head->left->left = new Node(2);
+	head->left->right = new Node(4);
+	head->left->left->left = new Node(1);
+	head->right->left = new Node(7);
+	head->right->left->left = new Node(6);
+	head->right->right = new Node(10);
+	//head->right->right->left = new Node(9);
+	//head->right->right->right = new Node(11);
+	cout << isCBT(head)<<endl;
+}
 
