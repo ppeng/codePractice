@@ -272,7 +272,7 @@ public:
 class SerializeAndReconstructTree{
 public:
 
-	//前序 序列化和反序列化 递归方式
+	//前序 序列化 递归方式
 	string serialByPre(Node *head){
 		if (head == nullptr){
 			return "#!";
@@ -284,8 +284,7 @@ public:
 		result+=serialByPre(head->right);
 		return result;
 	}
-
-	//反序列化 递归方式
+	//前序反序列化 递归方式
 	//将得到的字符串分割好后装入队列
 	Node* reconByPreString(string prestr){
 		queue<string>*q;
@@ -316,26 +315,188 @@ public:
 		return head;
 
 	}
+
+
+	//按层序列化 
+	string serialByLevel(Node *head){
+		if (head == nullptr){
+			return"#!";
+		}
+		string result;
+		string svalue = to_string(head->value);
+		result = svalue + "!";
+		queue<Node*>q;
+		q.push(head);
+		while (!q.empty())
+		{
+			head = q.front();
+			q.pop();
+			if (head->left != nullptr){
+				svalue = to_string(head->left->value);
+				result += svalue + "!";
+				q.push(head->left);
+			}
+			else{
+				result += "#!";
+			}
+			if (head->right != nullptr){
+				svalue = to_string(head->right->value);
+				result += svalue + "!";
+				q.push(head->right);
+			}
+			else{
+				result += "#!";
+			}
+		}
+		return result;
+	}
+
+	//按层反序列化
+	Node* generateNodeByString(string val)
+	{
+		if ("#" == val)
+			return nullptr;
+
+		return new Node(stoi(val));
+	}
+
+
+	Node* reconByLevelString(string levelStr){
+		queue<string>*q;
+		size_t firPos = 0;
+		size_t secPos = 0;
+
+		secPos = levelStr.find("!");//找到分隔符
+		while (secPos != string::npos)
+		{
+			q->push(levelStr.substr(firPos, secPos - firPos));//获取从指定的起始位置开始，长度为secPos-firPos的子字符串
+			firPos = secPos + 1;
+			secPos = levelStr.find("!", firPos);//找到返回位置，找不到返回npos
+		}
+		queue<Node*>*qNode = new queue<Node*>;//存储新生成的节点
+		Node *root = generateNodeByString(q->front());
+		q->pop();
+		if (nullptr != root){
+			qNode->push(root);
+		}
+		Node *node = nullptr;
+		while (!qNode->empty()){  //按队列顺序拿出节点，并分配左右节点，并把左右节点入队列
+			node = qNode->front();
+			qNode->pop();
+			if (node != nullptr){
+				cout << node->value << endl;
+			}
+			else{
+				cout << "#" << endl;
+			}
+			node->left = generateNodeByString(q->front());
+			q->pop();
+			node->right = generateNodeByString(q->front());
+			q->pop();
+			if (node->left != nullptr){
+				qNode->push(node->left);
+			}
+			if (node->right != nullptr){
+				qNode->push(node->right);
+			}
+
+		}
+		return root;
+
+	}
+
+
+
+
+
+
+
+
+
 };
 
-int main()
-{
-	SerializeAndReconstructTree test;
-	Node *head = new Node(5);
-	head->left = new Node(3);
-	head->right = new Node(8);
-	head->left->left = new Node(2);
-	head->left->right = new Node(4);
-	head->left->left->left = new Node(1);
-	head->right->left = new Node(7);
-	head->right->left->left = new Node(6);
-	head->right->right = new Node(10);
-	head->right->right->left = new Node(9);
-	head->right->right->right = new Node(11);
-	string result = test.serialByPre(head);
-	cout << result << endl;
-	
+//int main()
+//{
+//	SerializeAndReconstructTree test;
+//	Node *head = new Node(5);
+//	head->left = new Node(3);
+//	head->right = new Node(8);
+//	head->left->left = new Node(2);
+//	head->left->right = new Node(4);
+//	head->left->left->left = new Node(1);
+//	head->right->left = new Node(7);
+//	head->right->left->left = new Node(6);
+//	head->right->right = new Node(10);
+//	head->right->right->left = new Node(9);
+//	head->right->right->right = new Node(11);
+//	string result = test.serialByPre(head);
+//	cout << result << endl;
+//	string result2 = test.serialByLevel(head);
+//	cout << result2 << endl;
+//	
+//}
+
+
+//平衡二叉树：左右子树高度差不超过一
+//递归
+
+class ReturnData{//返回值类
+public:
+	bool isBalance;//是否平衡
+	int h;//子树树的高度
+	ReturnData(bool isB, int h){
+		isBalance = isB;
+		h = h;
+	}
+};
+
+ReturnData* process(Node *head){
+	if (head == nullptr){
+		return new ReturnData(true, 0);
+	}
+	ReturnData *leftData = process(head->left);
+	if (!leftData->isBalance){//左树不平衡，直接返回false
+		return new ReturnData(false, 0);
+	}
+	ReturnData *rightData = process(head->right);
+	if (!rightData->isBalance){//如果右树不平衡，直接返回false
+		return new ReturnData(false, 0);
+	}
+
+	if (abs(leftData->h - rightData->h) > 1){//左右两树差值大于1，返回false
+		return new ReturnData(false, 0);
+	}
+
+	return new ReturnData(true, max(leftData->h, rightData->h) + 1);//如果左右子树差值不大于1 返回左右两子树最大高度加上自己的高度1
+
 }
+
+bool isB(Node *head){
+	return process(head)->isBalance;
+}
+
+//int main()
+//{
+//	SerializeAndReconstructTree test;
+//	Node *head = new Node(5);
+//	head->left = new Node(3);
+//	head->right = new Node(8);
+//	head->left->left = new Node(2);
+//	head->left->right = new Node(4);
+//	head->left->left->left = new Node(1);
+//	head->right->left = new Node(7);
+//	head->right->left->left = new Node(6);
+//	head->right->right = new Node(10);
+//	head->right->right->left = new Node(9);
+//	head->right->right->right = new Node(11);
+//	cout << isB(head) << endl;
+//	
+//}
+
+
+
+//搜索二叉树
+
 
 
 
