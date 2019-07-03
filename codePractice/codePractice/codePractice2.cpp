@@ -7,6 +7,7 @@
 #include <sstream>
 #include <hash_map>
 #include<unordered_map>
+#include<time.h>
 
 using namespace std;
 using namespace stdext;
@@ -588,20 +589,161 @@ bool isCBT(Node *head){
 	return true;
 }
 
-int main()
-{
-	PrintBT test;
-	Node *head = new Node(5);
-	head->left = new Node(3);
-	head->right = new Node(8);
-	head->left->left = new Node(2);
-	head->left->right = new Node(4);
-	head->left->left->left = new Node(1);
-	head->right->left = new Node(7);
-	head->right->left->left = new Node(6);
-	head->right->right = new Node(10);
-	//head->right->right->left = new Node(9);
-	//head->right->right->right = new Node(11);
-	cout << isCBT(head)<<endl;
+//int main()
+//{
+//	PrintBT test;
+//	Node *head = new Node(5);
+//	head->left = new Node(3);
+//	head->right = new Node(8);
+//	head->left->left = new Node(2);
+//	head->left->right = new Node(4);
+//	head->left->left->left = new Node(1);
+//	head->right->left = new Node(7);
+//	head->right->left->left = new Node(6);
+//	head->right->right = new Node(10);
+//	//head->right->right->left = new Node(9);
+//	//head->right->right->right = new Node(11);
+//	cout << isCBT(head)<<endl;
+//}
+
+
+
+//已知一棵完全二叉树，求其节点的个数
+//要求：时间复杂度低于O(N)，N为这棵树的节点个数
+//遍历求解需要O（N）
+
+//递归求解
+//分析：如果完全二叉树右子树的最左节点能到达最后一层，说明整棵左子树为满树，用公式算出左子树节点数，递归求右子树节点数
+//如果不能到达最后一层，说明整棵右子树为满树，用公式求出右子树节点数，再递归求左子树节点数
+//O((logN)^2)=O(h^2)层数的平方  每一层只会选择一个节点进行bs递归，所以调用bs函数的次数为O（h）,
+//每次调用bs函数，都会查看node右子树的最左节点，所以会再遍历O（h）个节点。
+
+//整棵树的高度
+int mostLeftLevel(Node *node, int level){
+	while (node != nullptr){
+		level++;
+		node = node->left;
+	}
+	return level - 1;
+
+}
+int bs(Node *node, int level, int h){//level:头节点所在层数   h:当前树的总高度  这个值是固定的 因为所有的level计算都是计算的整棵树上的层
+	if (level == h){//如果总高度和当前节点所在层数相等，总共右一个节点
+		return 1;
+	}
+
+	if (mostLeftLevel(node->right, level+1) == h){//第一种情况，右子树的最左节点在整棵树的最后一层
+		return(1 << (h - level)) + bs(node->right, level + 1, h);//递归
+
+	}
+	else{//第二种情况
+		return(1 << (h - level - 1)) + bs(node->left, level + 1, h);  //注意()位置  +的优先级比<<大，所以左移操作用()括起来
+
+	}
+
+
 }
 
+int nodeNum(Node *head){//求节点个数主函数
+	if (head == nullptr){
+		return 0;
+	}
+	return bs(head, 1, mostLeftLevel(head, 1));
+}
+
+//int main()
+//{
+//	PrintBT test;
+//	Node *head = new Node(5);
+//	head->left = new Node(3);
+//	head->right = new Node(8);
+//	head->left->left = new Node(2);
+//	head->left->right = new Node(4);
+//	head->right->left = new Node(7);
+//	head->right->right = new Node(10);
+//	head->left->left->left = new Node(1);
+//	head->left->left->right = new Node(2);
+//	cout << nodeNum(head) << endl;
+//}
+
+
+
+// 哈希函数：输入域无穷；输出域有限 ；输入一样，输出一样；输入不一样，输出可能一样（哈希碰撞）；输出域的值均匀分布
+
+
+
+//设计RandomPool结构
+//设计一种结构，在该结构中有如下三个功能：
+//insert(key)：将某个key加入到该结构，做到不重复加入。
+//delete(key)：将原本在结构中的某个key移除。getRandom()：
+//等概率随机返回结构中的任何一个key。
+//要求：Insert、delete和getRandom方法的时间复杂度都是O(1)
+
+template<typename T>//模板参数列表
+class RandomPool{
+public:
+	hash_map<T, int>keyIndexMap;
+	hash_map<int, T>indexKeyMap;
+	int size;
+	RandomPool(){
+		srand((unsigned int)time(NULL));//随机数发生器初始函数 以系统时间为种子
+		size = 0;
+	}
+	~RandomPool(){}
+
+	void insert( T key );
+	void _delete(T key);
+	T getRandom();
+};
+
+template<typename T>
+void RandomPool<T>::insert(T key){
+	if (keyIndexMap.find(key) == keyIndexMap.end()){
+		keyIndexMap[key] = size;
+		indexKeyMap[size++] = key;
+	}
+}
+template<typename T>
+T RandomPool<T>::getRandom(){
+	int index = rand() % size;
+	return indexKeyMap[index];
+}
+
+template<typename T>
+void RandomPool<T>::_delete(T key){
+	if (keyIndexMap.find(key) != keyIndexMap.end()){
+		int index = keyIndexMap[key];//记录下来要删除的key的index
+		int lastindex = --size;
+		T lastkey = indexKeyMap[lastindex];//记录最后一个key
+		keyIndexMap[lastkey] = index;//把最后一个key的值设置为要删除的key的index
+		indexKeyMap[index] = lastkey;//把要删除的index处的值设置为最后一个index的值
+		keyIndexMap.erase(key);
+		indexKeyMap.erase(lastindex);
+	}
+}
+
+int main(){
+	RandomPool<std::string> rand;
+	rand.insert("p");
+	rand.insert("peng");
+	rand.insert("da");
+	rand.insert("shen");
+	
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	
+	
+	
+	rand._delete("da");
+	rand._delete("shen");
+	cout << "delete操作:" << endl;
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	cout << rand.getRandom() << endl;
+	
+}
