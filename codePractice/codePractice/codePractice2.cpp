@@ -4,6 +4,7 @@
 #include <string>
 #include <stack>
 #include <queue>
+#include <list>
 #include <sstream>
 #include <hash_map>
 #include<unordered_map>
@@ -722,28 +723,281 @@ void RandomPool<T>::_delete(T key){
 	}
 }
 
+//int main(){
+//	RandomPool<std::string> rand;
+//	rand.insert("p");
+//	rand.insert("peng");
+//	rand.insert("da");
+//	rand.insert("shen");
+//	
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	
+//	
+//	
+//	rand._delete("da");
+//	rand._delete("shen");
+//	cout << "delete操作:" << endl;
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	cout << rand.getRandom() << endl;
+//	
+//}
+
+
+//布隆过滤器 存在判断失误率   记住布隆过滤器大小计算公式 哈希函数个数计算公式 真实失误率计算公式
+
+
+
+// 并查集
+
+//先定义节点
+//class UnionNode{
+//public:
+//	int value;
+//	UnionNode(int v){
+//		value = v;
+//	}
+//	~UnionNode(){}
+//	/*bool operator != (const UnionNode &node1){
+//		return!(this->value == node1.value);
+//	}*/
+//
+//};
+//
+////重载!=运算符  如果value值不相等，则返回true 
+////注意，如果两个自己定义的类需要比较大小，要进行运算符重载
+////运算符重载有三种写法 可类外定义；  在类内只能有一个参数，作为成员函数时，*this即为左操作数；  类内作为友元函数
+//
+//bool operator == (const UnionNode &node1, const UnionNode &node2)
+//{
+//	return (node1.value == node2.value);
+//}
+//bool operator != (const UnionNode &node1, const UnionNode &node2)
+//{
+//	return !(node1.value == node2.value);
+//}
+//
+//
+//
+//class UnionFind{
+//public:
+//	hash_map<UnionNode, UnionNode>fatherMap;//key--节点  value--father
+//	hash_map<UnionNode, int>sizeMap;//某节点所在集合的总节点数
+//	UnionFind(list<UnionNode>nodes){
+//		//初始化
+//		for (auto &node : nodes){
+//			fatherMap[node] = node;//首节点指向自己
+//			sizeMap[node] = 1;//每个集合只有一个节点，总节点数是1
+//		}
+//	}
+//
+//	//递归版本找father节点
+//	UnionNode findHead(UnionNode node){//找father  在找的过程中将一个集合中的一串变成都指向father节点
+//		UnionNode father = fatherMap[node];
+//		if (father != node){
+//			father = findHead(father);//递归
+//		}
+//		fatherMap[node] = father;//将此集合中的所有节点设置为一个father
+//		return father;
+//
+//	}
+//	//非递归版本找father节点
+//	UnionNode findHeadUnr(UnionNode node){
+//		stack<UnionNode>s;
+//		UnionNode cur=node;
+//		UnionNode father = fatherMap[node];
+//		while (father != node){
+//			s.push(cur);
+//			cur = father;
+//			father = fatherMap[cur];
+//
+//		}
+//		while (!s.empty()){
+//			cur = s.top();
+//			s.pop();
+//			fatherMap[cur] = father;
+//		}
+//	}
+//
+//	//判断是不是同一集合
+//	bool isSameSet(UnionNode a, UnionNode b){
+//		return findHead(a) == findHead(b);
+//	}
+//
+//	void _union(UnionNode a, UnionNode b){
+//		UnionNode aHead = findHead(a);
+//		UnionNode bHead = findHead(b);
+//		if (aHead != bHead){
+//			int aSetSize = sizeMap[aHead];
+//			int bSetSize = sizeMap[bHead];
+//			if (aSetSize < bSetSize){//将数量少的节点的头挂到数量多的上面
+//				fatherMap[aHead] = bHead;
+//				sizeMap[bHead] = aSetSize + bSetSize;
+//
+//			}
+//			else
+//			{
+//				fatherMap[bHead] = aHead;
+//				sizeMap[aHead] = aSetSize + bSetSize;
+//			}
+//		}
+//	}
+//};
+
+
+
+
+//岛问题
+
+class Islands{
+public:
+	int contIslands(vector<vector<int>>m){
+		if (m.empty() || m[0].empty()){//数组大小为0
+			return 0;
+		}
+		int N = m.size();//行
+		int M = m[0].size();//列
+		int res = 0;
+		for (int i = 0; i < N; i++){
+			for (int j = 0; j < M; j++){
+				if (m[i][j] == 1){
+					res++;
+					infect(m, i, j, N, M);
+				}
+			}
+		}
+		return res;
+
+	}
+	void infect(vector<vector<int>>&m, int i, int j, int N, int M){//注意 如果要改变原数据，一定用引用
+		if (i < 0 || i >= N || j < 0 || j >= M || m[i][j] != 1){
+			return;
+		}
+		m[i][j] = 2;
+		infect(m, i + 1, j, N, M);
+		infect(m, i - 1, j, N, M);
+		infect(m, i, j + 1, N, M);
+		infect(m, i, j - 1, N, M);
+	}
+};
+
+//int main()
+//{
+//	vector<vector<int>>m1 = { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+//	{ 0, 1, 1, 1, 0, 1, 1, 1, 0 },
+//	{ 0, 1, 1, 1, 0, 0, 0, 1, 0 },
+//	{ 0, 1, 1, 0, 0, 0, 0, 0, 0 },
+//	{ 0, 0, 0, 0, 0, 1, 1, 0, 0 },
+//	{ 0, 0, 0, 0, 1, 1, 1, 0, 0 },
+//	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, };
+//	Islands test;
+//	cout<<test.contIslands(m1)<<endl;
+//}
+
+
+//前缀树  
+class TrieNode{
+public:
+	int path; //到达过此节点的次数
+	int end;   //以此节点结尾的字符串个数
+	TrieNode *nexts[26];//路
+	TrieNode(){
+		path = 0; 
+		end = 0;
+		for (int i = 0; i < 26; i++){
+			nexts[i] = nullptr;
+		}
+		//一共有26条路。，如果不通就是nullptr如果通了就是不为空
+		//如果不止26条路 可以设计成hashmap或者asic码等类型
+	}
+};
+
+class Trie{
+private:
+	TrieNode *root;
+public:
+	Trie(){
+		root = new TrieNode();
+	}
+	void insert(string word){
+		if (word.empty()){
+			return;
+		}
+		int length = word.length();
+		char *a=new char[length];
+		strcpy(a, word.c_str());
+		TrieNode *node = root;
+		int index = 0;
+		for (int i = 0; i < length; i++){
+			index = a[i] - 'a';
+			if (node->nexts[index] == nullptr){//如果还没有节点，创建一个节点
+				node->nexts[index] = new TrieNode();
+			}
+			node = node->nexts[index];
+			node->path++;//path增加1
+		}
+		node->end++;//word插入结束后最后一个node的end加一
+	}
+
+
+	//返回一个word出现了几次
+	int search(string word){
+		if (word.empty()){
+			return 0;
+		}
+		int length = word.length();
+		char *a = new char[length];
+		strcpy(a, word.c_str());
+		TrieNode *node = root;
+		int index = 0;
+		for (int i = 0; i < length; i++){
+			index = a[i] - 'a';
+			if (node->nexts[index] == nullptr){
+				return 0;
+			}
+			node = node->nexts[index];
+		}
+		return node->end;//返回这个word出现了几次
+	}
+
+
+	void _delete(string word){
+		if (search(word) != 0){
+			int length = word.length();
+			char *a = new char[length];
+			strcpy(a, word.c_str());
+			TrieNode *node = root;
+			int index = 0;
+			for (int i = 0; i < length; i++){
+				index = a[i] - 'a';
+				if (--node->nexts[index]->path == 0){//如果path==0，后边直接删除就行  否则，path减一
+					node->nexts[index] = nullptr;
+					return;
+				}
+				node = node->nexts[index];
+			}
+			node->end--;
+
+		}
+	}
+
+};
+
 int main(){
-	RandomPool<std::string> rand;
-	rand.insert("p");
-	rand.insert("peng");
-	rand.insert("da");
-	rand.insert("shen");
 	
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	
-	
-	
-	rand._delete("da");
-	rand._delete("shen");
-	cout << "delete操作:" << endl;
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	cout << rand.getRandom() << endl;
-	
+	Trie *test=new Trie();
+	cout << test->search("peng") << endl;
+	test->insert("peng");
+	test->insert("peng");
+	cout << test->search("peng") << endl;
+	test->_delete("peng");
+	cout << test->search("peng") << endl;
+
+
 }
