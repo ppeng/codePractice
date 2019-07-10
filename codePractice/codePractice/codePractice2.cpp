@@ -901,7 +901,8 @@ public:
 //}
 
 
-//前缀树  
+//前缀树   
+//字母放到边上，不要放到节点里边
 class TrieNode{
 public:
 	int path; //到达过此节点的次数
@@ -930,7 +931,7 @@ public:
 			return;
 		}
 		int length = word.length();
-		char *a=new char[length];
+		char *a=new char[length];//因为不知道word的长度，所以用动态方式开辟char类型的数组，将string转为char[]
 		strcpy(a, word.c_str());
 		TrieNode *node = root;
 		int index = 0;
@@ -989,15 +990,239 @@ public:
 
 };
 
-int main(){
+//int main(){
+//	
+//	Trie *test=new Trie();
+//	cout << test->search("peng") << endl;
+//	test->insert("peng");
+//	test->insert("peng");
+//	cout << test->search("peng") << endl;
+//	test->_delete("peng");
+//	cout << test->search("peng") << endl;
+//}
+
+ 
+
+//拼接字符串，使新字符串有最低的字典序
+ 
+
+
+//切金条——贪心策略
+//算法思想：
+/*基于哈夫曼编码的思想，
+(1) 首先构造小根堆
+(2) 每次取最小的两个数（小根堆），使其代价最小。并将其和加入到小根堆中
+(3) 重复(2)过程，直到最后堆中只剩下一个节点
+注意：代价不是最后一个值，而是所有非叶结点之和，即上面求得两两个结点之和
+*/
+
+
+
+//函数对象（function object）又叫做仿函数
+//其实就是重载了operator（）操作符的struct或class
+struct cmp{
+	bool operator()(int &a, int &b){
+		return a > b; //第一个元素大于第二个元素，返回真时； 对应的是小根堆，升序！
+	}
+};
+
+int lessMoney(int arr[], int length){
+ 	priority_queue<int, vector<int>, cmp> pQ;   //priority_queue<Type, Container, Functional>
+	                                            //Type为数据类型， Container为保存数据的容器，Functional为元素比较方式
+	for (int i = 0; i < length; i++){
+		pQ.push(arr[i]);//建立小根堆
+	}
+	int sum = 0;
+	int cur = 0;
+	while (pQ.size()>1){
+		int top1 = pQ.top();
+		pQ.pop();
+		int top2 = pQ.top();
+		pQ.pop();
+		cur = top1 + top2;
+		sum += cur;
+		pQ.push(cur);
+	}
+	return sum;
+}
+
+//int main()
+//{
+//	int arr[5] = { 10, 5, 7,11,9 };
+//	int length = 5;
+//	cout << lessMoney(arr, length) << endl;
+//	
+//}
+
+
+
+
+//做项目，不同项目启动资金和收益不同，求最后获得的最大钱数
+//两个堆，成本组成小根堆，收益组成大根堆
+//每次从成本堆里拿出成本最小的项目放入收益堆里，再从收益堆里取收益最大的项目，直到达到项目最大值或当前成本不足以启动项目
+
+
+
+class IPONode{
+public:
+	int p;//收益
+	int c;//启动资金
+	IPONode();
+	IPONode(int p,int c){
+		p = p;
+		c = c;
+
+	}
+};
+
+class  cmpMinCost{  //花费按小根堆排列
+public:
+	bool operator()(IPONode &a, IPONode &b){
+		return a.c > b.c; //第一个元素大于第二个元素，返回真时； 对应的是小根堆，升序！
+	}
+};
+class cmpMaxProfit{ //收益按大根堆排列
+public:
+	bool operator()(IPONode &a, IPONode &b){
+		return a.p < b.p; //第一个元素大于第二个元素，返回真时； 对应的是小根堆，升序！
+	}
+};
+class IPO{
+public:
+	int findMaxCapital(int k, int w, int profits[], int captial[],int length){ //w为现有总钱数 k为项目数量
+		IPONode *nodes = new IPONode[length];//注意此处写法
+		for (int i = 0; i < length; i++){
+			nodes[i] = IPONode(profits[i], captial[i]);
+
+
+		}
+		priority_queue<IPONode, vector<IPONode>, cmpMinCost> minCostQ;
+		priority_queue<IPONode, vector<IPONode>, cmpMaxProfit> maxProfitQ;
+		for (int i = 0; i < length; i++){
+			minCostQ.push(nodes[i]);
+		}
+		for (int i = 0; i < k; i++){
+			while (!minCostQ.empty() && minCostQ.top().c <= w){//每个项目的成本不能超过要求的成本
+				maxProfitQ.push(minCostQ.top());
+				minCostQ.pop();
+			}
+			if (maxProfitQ.empty()){
+				return w;
+			}
+			w += maxProfitQ.top().p;//完成项目后的资本变为原始资本加上利润
+			maxProfitQ.pop();
+		}
+		return w;
+
+	}
+
+};
+
+
+
+//安排会议室，返回能举办的最多的场次数
+//按结束时间最早的安排
+class Program{
+public:
+	int start;
+	int end;
+	Program();
+	Program(int start, int end){
+		start = start;
+		end = end;
+	}
 	
-	Trie *test=new Trie();
-	cout << test->search("peng") << endl;
-	test->insert("peng");
-	test->insert("peng");
-	cout << test->search("peng") << endl;
-	test->_delete("peng");
-	cout << test->search("peng") << endl;
+};
+
+class  cmpMinEnd{  //花费按小根堆排列
+public:
+	bool operator()(Program &a, Program &b){
+		return a.end > b.end; //第一个元素大于第二个元素，返回真时； 对应的是小根堆，升序！
+	}
+};
 
 
+class BestArrange{
+public:
+	int bestArrange(Program programs[], int start,int length){
+		//先对数组按结束时间从小到大排序
+		priority_queue<Program, vector<Program>, cmpMinEnd> minEnd;
+		Program cur;
+		for (int i = 0; i < length; i++){
+			minEnd.push(programs[i]);//将所有项目按结束时间组成小根堆
+		}
+
+		
+
+		int result = 0;//计数
+		for (int i = 0; i < length; i++){
+			cur = minEnd.top();
+			if (start <= cur.start){ //如果开始时间<=当前项目的开始时间，则可以开始
+				result++;
+				start = cur.end;
+				minEnd.pop();
+			}
+			else{
+				minEnd.pop();
+
+			}
+		}
+		return result;
+		
+		
+	}
+
+};
+
+
+
+//递归
+//求n!
+class Factorial
+{
+public:
+	//非递归版本
+	int function1(int n){
+		int result = 1;
+		for (int i = 1; i <= n; i++){
+			result *= i;
+
+		}
+		return result;
+	}
+
+	//递归版本
+	int function2(int n){
+		if (n == 1){
+			return 1;
+		}
+		return function2(n - 1)*n;
+	}
+};
+
+//int main()
+//{
+//	int n = 10;
+//	Factorial test;
+//	cout<<test.function1(n)<<endl;
+//	cout << test.function2(n) << endl;
+//}
+
+
+ //汉诺塔问题
+
+void process(int N, string from, string to, string help){
+	if (N == 1){
+		cout << "move 1 from " << from << " to " << to << endl;
+	}
+	else{
+		process(N - 1, from, help, to);
+		cout << "move "<<N<<" from " << from << " to " << to << endl;
+		process(N - 1, help, to, from);
+	}
+}
+
+int main()
+{
+	process(3, "左", "右", "中");
 }
