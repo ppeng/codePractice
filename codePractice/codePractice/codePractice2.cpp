@@ -1223,7 +1223,36 @@ void process(int N, string from, string to, string help){
 	}
 }
 
-int main()
-{
-	process(3, "左", "右", "中");
+//int main()
+//{
+//	process(3, "左", "右", "中");
+//}
+
+
+
+
+//打印一个字符串的全部子序列，包括空字符串
+//对于字符串，每个位置有两种情况：包含此位置；不包含此位置
+//
+
+void printAllSub(char str[], int i, string res){//i:当前数组的位置
+	//int length = sizeof(str) ;//得到数组的长度 两种方式  此种方式得不到正确长度，永远为4  因为传递过来的只是数组的首位置指针
+	int length = strlen(str);//此方法正确，但是数组只能使用字符串初始化 因为只有字符串才以'\0'结尾
+	if (i == length){
+		cout << res << endl;
+		return;
+	}
+	printAllSub(str, i + 1, res);  //不包含此位置，此时res的值不变，走到下一个位置，同样分为两种情况
+	printAllSub(str, i + 1, res + str[i]);//包含此位置，此时res的值加上此位置的值，走到下一个位置，同样分为两种情况
+
+
+}
+
+int main(){
+	//char a[] = { 'a', 'b', 'c','d','e' };
+	char a[] = "abcdefghi";
+	int length1 = sizeof(a);
+	//int length2 = strlen(a);//strlem必须对用字符串数组形式，以‘\0结尾’
+	printAllSub(a, 0, "");
+
 }
