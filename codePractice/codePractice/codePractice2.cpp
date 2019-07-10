@@ -1196,7 +1196,7 @@ public:
 		if (n == 1){
 			return 1;
 		}
-		return function2(n - 1)*n;
+		return n*function2(n - 1);
 	}
 };
 
@@ -1210,15 +1210,16 @@ public:
 
 
  //汉诺塔问题
+//从上到下为1：N
 
 void process(int N, string from, string to, string help){
 	if (N == 1){
-		cout << "move 1 from " << from << " to " << to << endl;
+		cout << "move 1 from " << from << " to " << to << endl; //第三步，如果只剩下最后一个，从左移动到右
 	}
 	else{
-		process(N - 1, from, help, to);
+		process(N - 1, from, help, to);//第一步：1：N-1 从左到中 此时借助的是右杆
 		cout << "move "<<N<<" from " << from << " to " << to << endl;
-		process(N - 1, help, to, from);
+		process(N - 1, help, to, from);//第三步：1：N-1从中杆到右杆，此时，借助的是左杆
 	}
 }
 
