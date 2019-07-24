@@ -1248,11 +1248,179 @@ void printAllSub(char str[], int i, string res){//i:当前数组的位置
 
 }
 
-int main(){
-	//char a[] = { 'a', 'b', 'c','d','e' };
-	char a[] = "abcdefghi";
-	int length1 = sizeof(a);
-	//int length2 = strlen(a);//strlem必须对用字符串数组形式，以‘\0结尾’
-	printAllSub(a, 0, "");
+//int main(){
+//	//char a[] = { 'a', 'b', 'c','d','e' };
+//	char a[] = "abcdefghi";
+//	int length1 = sizeof(a);
+//	//int length2 = strlen(a);//strlem必须对用字符串数组形式，以‘\0结尾’
+//	printAllSub(a, 0, "");
+//}
 
+
+
+//最小路径问题
+//暴力递归 
+int walk1(vector<vector<int>>matrix, int i, int j){//i:当前行数 j:当前列数
+	if (i == matrix.size()-1 && j == matrix[0].size()-1){//已经到达最右下角位置
+		return matrix[i][j];
+	}
+	if (i == matrix.size()-1){//到达了最后一行，只能往右走
+		return matrix[i][j] + walk1(matrix, i, j + 1);
+	}
+	if (j == matrix[0].size()-1){//到达了最后一列，只能往下走
+		return matrix[i][j] + walk1(matrix, i + 1, j);
+	}
+
+	int right = walk1(matrix, i, j + 1);//往右走，到右下角的最短路径和  枚举
+	int down = walk1(matrix, i + 1, j);//往下走 到右下角的最短路径和
+	return matrix[i][j] + min(right, down);//选择长度最短的路径
 }
+
+
+//动态规划
+//递归时有重复状态  无后效性问题 （之前选择的不会影响后续）
+//先根据basecase   再找普通位置
+
+
+
+
+
+
+
+
+
+
+//int main()
+//{
+//	vector<vector<int>>a = { { 1, 3, 2, 9 }, { 8, 1, 3, 0 }, { 5, 0, 6, 1 }, { 8, 8, 4, 0 } };
+//	cout << walk1(a, 0, 0) << endl;
+//}
+
+
+
+//给你一个数组arr，和一个整数aim。如果可以任意选择arr中的
+//数字，能不能累加得到aim
+
+bool sumIsaim(int a[], int length,int i,int sum,int aim){//数组 长度 当前位置 和 目标
+	if (sum == aim ){//如果相等，返回true
+		return true;
+	}
+	if (i == length){
+		return false;
+	}
+	return sumIsaim(a, length, i + 1, sum , aim) || sumIsaim(a, length, i+1, sum+a[i],aim);
+	
+	
+}
+
+//int main()
+//{
+//	int a[3] = { 1, 2, 3 };
+//	int length = 3;
+//	int aim = 5;
+//	cout << sumIsaim(a, 3, 0, 0, 5)<<endl; 
+//}
+
+
+
+//剑指1 赋值运算符
+//注意：拷贝构造函数只在对一个未存在的对象初始化的时候使用，
+//而拷贝赋值针对的是已经存在的对象进行初始化
+
+class CMyString{
+public:
+	CMyString(char* pData = nullptr);
+	
+	CMyString(const CMyString& str);//如果构造函数的第一个参数是自身类型的引用，且任何额外的参数都有默认值，
+	                                //此构造函数为拷贝构造函数
+	~CMyString(void);
+	CMyString& operator = (const CMyString& str);//拷贝赋值运算符
+
+	void Print();
+private:
+	char* m_pData;
+};
+
+
+//构造函数
+CMyString::CMyString(char* pData){
+	if (pData == nullptr){
+		m_pData = new char[1];
+		m_pData[0] = '\0';
+	}
+
+	else{
+		int length = strlen(pData);//strlen() 计算字符串的长度，以\0'为字符串结束标记。
+		m_pData = new char[length + 1];
+		strcpy(m_pData, pData);
+	}
+}
+
+//拷贝构造函数
+CMyString::CMyString(const CMyString &str)
+{
+	int length = strlen(str.m_pData);
+	m_pData = new char[length + 1];
+	m_pData = str.m_pData;
+}
+
+//析构函数
+CMyString::~CMyString()
+{
+	delete[] m_pData;
+}
+
+
+
+//运算符重载有三种写法 可类外定义；  在类内只能有一个参数，作为成员函数时，*this即为左操作数；  类内作为友元函数
+
+//拷贝赋值运算符
+CMyString& CMyString::operator=(const CMyString &str){
+
+	if (this == &str){  //如果是同一个实例，不用赋值，不能释放内存，因为传入的内存和释放的内存是同一个
+		return *this;
+	}
+	delete[]m_pData;  //分配新内存前释放自身已有的内存
+	m_pData = nullptr;
+
+	m_pData = new char[strlen(str.m_pData) + 1];
+	strcpy(m_pData, str.m_pData);
+	return *this;
+}
+
+void CMyString::Print()
+{
+	printf("%s", m_pData);
+}
+
+
+
+int main()
+{
+	char *testChar = "abc";
+	CMyString test1(testChar), test2,test4;//直接初始化
+	CMyString test3 = "aaa";//拷贝初始化，使用的是拷贝构造函数
+	test2 = testChar;
+	test4 = test3;
+
+	test1.Print();
+	test2.Print();
+	test3.Print();
+	test4.Print();
+}
+
+//class TestClass{
+//public:
+//	TestClass(int data) :a(data){}
+//private:
+//	int a;
+//};
+//
+//int main()
+//{
+//	TestClass a(5);
+//	int data = 5;
+//	
+//}
+
+
