@@ -9,6 +9,7 @@
 #include <hash_map>
 #include<unordered_map>
 #include<time.h>
+#include <cstdio>
 
 using namespace std;
 using namespace stdext;
@@ -1324,7 +1325,7 @@ bool sumIsaim(int a[], int length,int i,int sum,int aim){//数组 长度 当前位置 和
 
 
 //剑指1 赋值运算符
-//注意：拷贝构造函数只在对一个未存在的对象初始化的时候使用，
+//注意：构造函数只在对一个未存在的对象初始化的时候使用，
 //而拷贝赋值针对的是已经存在的对象进行初始化
 
 class CMyString{
@@ -1361,7 +1362,8 @@ CMyString::CMyString(const CMyString &str)
 {
 	int length = strlen(str.m_pData);
 	m_pData = new char[length + 1];
-	m_pData = str.m_pData;
+	strcpy(m_pData, str.m_pData);
+	//m_pData = str.m_pData;
 }
 
 //析构函数
@@ -1390,24 +1392,35 @@ CMyString& CMyString::operator=(const CMyString &str){
 
 void CMyString::Print()
 {
-	printf("%s", m_pData);
+	cout<<m_pData<<endl;
 }
 
 
 
-int main()
-{
-	char *testChar = "abc";
-	CMyString test1(testChar), test2,test4;//直接初始化
-	CMyString test3 = "aaa";//拷贝初始化，使用的是拷贝构造函数
-	test2 = testChar;
-	test4 = test3;
+//int main()
+//{
+//	char *testChar = "abc";
+//	CMyString test1(testChar), test2(testChar);//直接初始化
+//	CMyString test4 = test2;//拷贝初始化，使用拷贝构造函数
+//	CMyString test3 = "aaa";//拷贝初始化，使用的是拷贝构造函数,此时会进行隐式的类型转换，虽然拷贝构造函数接受CMyString,
+//	                        //但仍可以使用string类型进行拷贝初始化。C++ primer p263
+//	
+//	test4 = test3;//已经存在的对象,使用拷贝赋值运算符
+//
+//	test1.Print();
+//	test2.Print();
+//	test3.Print();
+//	test4.Print();
+//
+//	//连续赋值
+//	CMyString test5, test6;
+//	test5 = test6 = test2;
+//	test5.Print();
+//	test6.Print();
+//}
 
-	test1.Print();
-	test2.Print();
-	test3.Print();
-	test4.Print();
-}
+
+
 
 //class TestClass{
 //public:
@@ -1422,5 +1435,226 @@ int main()
 //	int data = 5;
 //	
 //}
+
+
+
+////指针和引用测试
+//int main()
+//{
+//	int a = 5;
+//	int &f = a;//f时对a的引用，引用即别名
+//	int *g = &f;//此时&是取地址符
+//	int *b = &a;//*紧随类型名出现，表示指针，存放的是a的地址，指向a
+//	int c = *b;  //*出现在表达式，表示解引用。得到指针指向对象的值
+//	int *d = nullptr;
+//	d = b;//赋值，改变了d指针的值，d指针指向了和b一样的位置。
+//	*d = 7;//使用*解引用，改变了d指针指向的对象的值
+//	cout << &a << endl;//a的地址
+//	cout << a << endl;//a的值
+//	cout << &b << endl;//b指针本身的地址
+//	cout << *b << endl;//解引用b得到的b里存放的地址对应的对象的值
+//	cout << b << endl;//b中存放的a的地址
+//	cout << c << endl;
+//	cout << d << endl;
+//	cout << f << endl;
+//	cout << g << endl;
+//	cout << *g << endl;
+//	
+//}
+//sizeof()测试
+
+//int GetSize(char data[])
+//{
+//	return sizeof(data);
+//}
+//int main()
+//{
+//	char data1[] = { 1, 2, 3, 4,5 };
+//	int size1 = sizeof(data1);
+//	char *data2 = data1;
+//	int size2 = sizeof(data2);
+//	int size3 = GetSize(data1);
+//	cout << size1 << endl;
+//	cout << size2 << endl;
+//	cout << size3 << endl;
+//}
+
+
+
+
+
+//剑指3 找出数组中的重复数字
+bool duplicate(int numbers[], int length, int* duplication) {
+	//方法三 先排序，再找重复数字
+	//冒泡排序O（n）=n2
+	if (numbers == nullptr || length <= 0)
+		return false;
+	for (int i = 0; i < length; ++i){
+		if (numbers[i]<0 || numbers[i]>length - 1)
+			return false;
+	}
+
+	for (int i = length-1; i >0 ; i--)
+	{
+		for (int j = 0; j < i; j++){
+			if (numbers[j ] > numbers[j+1]){
+				int temp = numbers[j +1];
+				numbers[j +1] = numbers[j];
+				numbers[j] = temp;
+			}
+		}
+	}
+	for (int i = 0; i < length; i++)
+	{
+		cout << numbers[i] << ' ';
+	}
+	for (int i = 0; i < length; i++)
+	{
+		if (numbers[i] == numbers[i + 1]){
+			*duplication = numbers[i];
+			return true;
+		}
+		
+	}
+	return false;
+}
+
+	//方法一
+	/*if (numbers == nullptr || length <= 0)
+		return false;
+	for (int i = 0; i < length; ++i){
+		if (numbers[i]<0 || numbers[i]>length - 1)
+			return false;
+	}
+	for (int i = 0; i < length; i++){
+		while (numbers[i] != i){
+			if (numbers[i] == numbers[numbers[i]])
+			{
+				*duplication = numbers[i];
+				return true;
+			}
+
+			int temp = numbers[i];
+			numbers[i] = numbers[temp];
+			numbers[temp] = temp;
+		}
+	}
+	return false;*/
+
+	//方法二：
+	/*if (numbers == nullptr || length <= 0)
+		return false;
+	for (int i = 0; i < length; ++i){
+		if (numbers[i]<0 || numbers[i]>length - 1)
+			return false;
+	}
+	int *hashmap = new int[length - 1];
+	for (int i = 0; i < length; i++)
+	{
+		if (hashmap[numbers[i]] == 1){
+			*duplication = numbers[i];
+			return true;
+
+		}
+		hashmap[numbers[i]] = 1;
+		
+
+	}
+	return false;
+}*/
+
+
+// ====================测试代码====================
+bool contains(int array[], int length, int number)
+{
+	for (int i = 0; i < length; ++i)
+	{
+		if (array[i] == number)
+			return true;
+	}
+
+	return false;
+}
+void test(char* testName, int numbers[], int lengthNumbers, int expected[], int expectedExpected, bool validArgument)
+{
+	printf("%s begins: ", testName);
+
+	int duplication;
+	bool validInput = duplicate(numbers, lengthNumbers, &duplication);
+
+	if (validArgument == validInput)
+	{
+		if (validArgument)
+		{
+			if (contains(expected, expectedExpected, duplication))
+				printf("Passed.\n");
+			else
+				printf("FAILED.\n");
+		}
+		else
+			printf("Passed.\n");
+	}
+	else
+		printf("FAILED.\n");
+}
+
+// 重复的数字是数组中最小的数字
+void test1()
+{
+	int numbers[] = { 2, 1, 3, 1, 4 };
+	int duplications[] = { 1 };
+	test("Test1", numbers, sizeof(numbers) / sizeof(int), duplications, sizeof(duplications) / sizeof(int), true);
+}
+
+// 重复的数字是数组中最大的数字
+void test2()
+{
+	int numbers[] = { 2, 4, 3, 1, 4 };
+	int duplications[] = { 4 };
+	test("Test2", numbers, sizeof(numbers) / sizeof(int), duplications, sizeof(duplications) / sizeof(int), true);
+}
+
+// 数组中存在多个重复的数字
+void test3()
+{
+	int numbers[] = { 2, 4, 2, 1, 4 };
+	int duplications[] = { 2, 4 };
+	test("Test3", numbers, sizeof(numbers) / sizeof(int), duplications, sizeof(duplications) / sizeof(int), true);
+}
+
+// 没有重复的数字
+void test4()
+{
+	int numbers[] = { 2, 1, 3, 0, 4 };
+	int duplications[] = { -1 }; // not in use in the test function
+	test("Test4", numbers, sizeof(numbers) / sizeof(int), duplications, sizeof(duplications) / sizeof(int), false);
+}
+
+// 没有重复的数字
+void test5()
+{
+	int numbers[] = { 2, 1, 3, 5, 4 };
+	int duplications[] = { -1 }; // not in use in the test function
+	test("Test5", numbers, sizeof(numbers) / sizeof(int), duplications, sizeof(duplications) / sizeof(int), false);
+}
+
+// 无效的输入
+void test6()
+{
+	int* numbers = nullptr;
+	int duplications[] = { -1 }; // not in use in the test function
+	test("Test6", numbers, 0, duplications, sizeof(duplications) / sizeof(int), false);
+}
+
+//void main()
+//{
+//	test1();
+//	test2();
+//	test3();
+//	test4();
+//	test5();
+//	test6();
+//}
+
 
 
