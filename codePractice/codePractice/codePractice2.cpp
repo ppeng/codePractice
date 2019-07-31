@@ -1657,4 +1657,242 @@ void test6()
 //}
 
 
+//剑指 3.2 不修改数组找出重复的数字
+//int countRange(const int* numbers, int length, int start, int end){
+//	if (numbers == nullptr)
+//		return 0;
+//	int count = 0;
+//	for (int i = 0; i < length; i++)
+//	{
+//		if (numbers[i] >= start&&numbers[i] <= end)
+//			count++;
+//	}
+//	return count;
+//
+//}
+//
+//
+//
+//
+//
+//
+//int getDuplication(const int* numbers, int length){
+//	if (numbers == nullptr || length <= 0)
+//		return -1;
+//	int start = 1;
+//	int end = length -1;
+//	while (end >= start){
+//		int middle = ((start + end) / 2)+start;
+//		int count = countRange(numbers, length,start, end);
+//		if (end == start){
+//			if (count > 1)
+//				return start;
+//			else
+//				break;
+//		}
+//		if (count > (middle - start + 1))
+//			end = middle;
+//		else
+//			start = middle + 1;
+//	}
+//	return -1;
+//
+//}
 
+
+//int main()
+//{
+//	char str1[] = "hello";
+//	char str2[] = "hello";
+//	char *str3 = "hello";
+//	char *str4 = "hello";
+//	if (str1 == str2)
+//		cout << "str1 and str2 are same" << endl;
+//	else
+//		cout << "not same" << endl;
+//}
+
+
+//剑指5 替换空格
+
+
+/*length 为字符数组str的总容量，大于或等于字符串str的实际长度*/
+void ReplaceBlank(char str[], int length)
+{ 
+	if (str == nullptr || length <= 0){
+		return;
+	}
+	int i = 0;
+	int size = 0;//统计字符串长度
+	int num = 0;//统计空格数量
+	while (str[i] != '\0'){
+		size++;
+		if (str[i] == ' '){
+			num++;
+		}
+		i++;
+		
+	}
+
+	int newStrIndex = size + num * 2;
+	int oldStrIndex = size;
+	while (oldStrIndex >= 0 && newStrIndex > oldStrIndex){
+		if (str[oldStrIndex] == ' '){
+			str[newStrIndex--] = '0';
+			str[newStrIndex--] = '2';
+			str[newStrIndex--] = '%';
+		}
+		else
+			str[newStrIndex--] = str[oldStrIndex];
+		oldStrIndex--;
+	}
+}
+
+// ====================测试代码====================
+void Test(char* testName, char str[], int length, char expected[])
+{
+	if (testName != nullptr)
+		printf("%s begins: ", testName);
+
+	ReplaceBlank(str, length);
+
+	if (expected == nullptr && str == nullptr)
+		printf("passed.\n");
+	else if (expected == nullptr && str != nullptr)
+		printf("failed.\n");
+	else if (strcmp(str, expected) == 0)
+		printf("passed.\n");
+	else
+		printf("failed.\n");
+}
+
+// 空格在句子中间
+void Test1()
+{
+	const int length = 100;
+
+	char str[length] = "hello world";
+	Test("Test1", str, length, "hello%20world");
+}
+
+// 空格在句子开头
+void Test2()
+{
+	const int length = 100;
+
+	char str[length] = " helloworld";
+	Test("Test2", str, length, "%20helloworld");
+}
+
+// 空格在句子末尾
+void Test3()
+{
+	const int length = 100;
+
+	char str[length] = "helloworld ";
+	Test("Test3", str, length, "helloworld%20");
+}
+
+// 连续有两个空格
+void Test4()
+{
+	const int length = 100;
+
+	char str[length] = "hello  world";
+	Test("Test4", str, length, "hello%20%20world");
+}
+
+// 传入nullptr
+void Test5()
+{
+	Test("Test5", nullptr, 0, nullptr);
+}
+
+// 传入内容为空的字符串
+void Test6()
+{
+	const int length = 100;
+
+	char str[length] = "";
+	Test("Test6", str, length, "");
+}
+
+//传入内容为一个空格的字符串
+void Test7()
+{
+	const int length = 100;
+
+	char str[length] = " ";
+	Test("Test7", str, length, "%20");
+}
+
+// 传入的字符串没有空格
+void Test8()
+{
+	const int length = 100;
+
+	char str[length] = "helloworld";
+	Test("Test8", str, length, "helloworld");
+}
+
+// 传入的字符串全是空格
+void Test9()
+{
+	const int length = 100;
+
+	char str[length] = "   ";
+	Test("Test9", str, length, "%20%20%20");
+}
+
+//int main(int argc, char* argv[])
+//{
+//	Test1();
+//	Test2();
+//	Test3();
+//	Test4();
+//	Test5();
+//	Test6();
+//	Test7();
+//	Test8();
+//	Test9();
+//
+//	return 0;
+//}
+
+
+// 剑指5-2 两个有序数组合并
+
+void merge(int arr1[], int arr2[], int length1, int length2){
+	int length = length1 + length2 - 1;
+	length1--;
+	length2--;
+
+	while (length1 >= 0 && length2 >= 0){
+		if (arr1[length1] > arr2[length2]){
+			arr1[length--] = arr1[length1--];
+		}
+		else
+			arr1[length--] = arr2[length2--];
+		
+	}
+	
+	while (length2 >= 0)//array2还有剩余值，此时array1已经比较完，直接将array2搬过去
+	{
+		arr1[length--] = arr2[length2--];
+	}
+
+
+}
+
+int main()
+{
+	int arry2[] = { 1, 2, 3, 4 };
+	int arry1[8] = { 5, 6, 7, 8 };
+	int length1 = 4;
+	int length2 = 4;
+	merge(arry1, arry2, 4, 4);
+	for (int i = 0; i <8; i++)
+	{
+		cout << arry1[i] << ',' << endl;
+	}
+}
