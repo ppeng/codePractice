@@ -24,6 +24,21 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\Utilities\BinaryTree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Utilities\Array.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Utilities\List.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Utilities\StringUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Utilities\Tree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -33,6 +48,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="codePractice2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utilities\Array.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utilities\BinaryTree.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utilities\List.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utilities\StringUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utilities\Tree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

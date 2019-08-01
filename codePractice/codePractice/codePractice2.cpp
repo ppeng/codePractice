@@ -10,6 +10,8 @@
 #include<unordered_map>
 #include<time.h>
 #include <cstdio>
+#include "..\Utilities\BinaryTree.h"
+#include "..\Utilities\List.h"
 
 using namespace std;
 using namespace stdext;
@@ -1900,54 +1902,7 @@ void merge(int arr1[], int arr2[], int length1, int length2){
 
 //剑指6 从尾到头打印链表
 
-struct ListNode{
-	int m_nValue;
-	ListNode* m_pNext;
-};
 
-void PrintList(ListNode* pHead)
-{
-	printf("PrintList starts.\n");
-
-	ListNode* pNode = pHead;
-	while (pNode != nullptr)
-	{
-		printf("%d\t", pNode->m_nValue);
-		pNode = pNode->m_pNext;
-	}
-
-	printf("\nPrintList ends.\n");
-}
-ListNode* CreateListNode(int value)
-{
-	ListNode* pNode = new ListNode();
-	pNode->m_nValue = value;
-	pNode->m_pNext = nullptr;
-
-	return pNode;
-}
-
-void ConnectListNodes(ListNode* pCurrent, ListNode* pNext)
-{
-	if (pCurrent == nullptr)
-	{
-		printf("Error to connect two nodes.\n");
-		exit(1);
-	}
-
-	pCurrent->m_pNext = pNext;
-}
-
-void DestroyList(ListNode* pHead)
-{
-	ListNode* pNode = pHead;
-	while (pNode != nullptr)
-	{
-		pHead = pHead->m_pNext;
-		delete pNode;
-		pNode = pHead;
-	}
-}
 
 //核心代码 
 //方法一 栈
@@ -2034,11 +1989,51 @@ void Test63()
 	Test(nullptr);
 }
 
-int main(int argc, char* argv[])
-{
-	Test61();
-	Test62();
-	Test63();
+//int main(int argc, char* argv[])
+//{
+//	Test61();
+//	Test62();
+//	Test63();
+//
+//	return 0;
+//}
 
-	return 0;
+
+
+ 
+
+BinaryTreeNode* constructCore(vector<int> pre, int startPre, int endPre, vector<int>vin, int startVin, int endVin){
+	 if (startPre>endPre || startVin>endVin)
+		 return nullptr;
+	 BinaryTreeNode *root = new BinaryTreeNode();//前序序列第一个数字是根节点的值
+	 root->m_nValue = pre[startPre];
+	 root->m_pRight = root->m_pLeft = nullptr;
+	 for (int i = startVin; i <= endVin; i++)
+	 {
+		 if (vin[i] == pre[startPre]){
+			 root->m_pLeft = constructCore(pre, startPre + 1, startPre + i - startVin, vin, startVin, i - 1);
+			 root->m_pRight = constructCore(pre, i - startVin + startPre + 1, endPre, vin, i + 1, endVin);
+			 break;
+
+		 }
+		 
+	 }
+	 return root;
+ }
+BinaryTreeNode* reConstructBinaryTree(vector<int> pre, vector<int> vin) {
+
+	return constructCore(pre, 0, pre.size() - 1, vin, 0, vin.size() - 1);
+
+}
+
+
+
+int main()
+{
+	vector<int>a = { 1, 2, 4, 7, 3, 5, 6,8 };
+	vector<int>b = { 4, 7, 2, 1, 5, 3, 8,6 };
+	BinaryTreeNode* result = reConstructBinaryTree(a, b);
+	PrintTree(result);
+
+
 }
