@@ -2001,7 +2001,7 @@ void Test63()
 
 
  
-
+//剑指7 重建二叉树
 BinaryTreeNode* constructCore(vector<int> pre, int startPre, int endPre, vector<int>vin, int startVin, int endVin){
 	 if (startPre>endPre || startVin>endVin)
 		 return nullptr;
@@ -2028,12 +2028,10 @@ BinaryTreeNode* reConstructBinaryTree(vector<int> pre, vector<int> vin) {
 
 
 
-int main()
-{
-	vector<int>a = { 1, 2, 4, 7, 3, 5, 6,8 };
-	vector<int>b = { 4, 7, 2, 1, 5, 3, 8,6 };
-	BinaryTreeNode* result = reConstructBinaryTree(a, b);
-	PrintTree(result);
-
-
-}
+//int main()
+//{
+//	vector<int>a = { 1, 2, 4, 7, 3, 5, 6,8 };
+//	vector<int>b = { 4, 7, 2, 1, 5, 3, 8,6 };
+//	BinaryTreeNode* result = reConstructBinaryTree(a, b);
+//	PrintTree(result);
+//}
