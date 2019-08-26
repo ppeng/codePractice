@@ -512,7 +512,7 @@ int * partation(int arr[], int L, int R)
 	{
 		if (arr[L] < arr[R])
 		{
-			swap(arr[++less], arr[L++]);
+			swap(arr[++less], arr[L++]);//此步骤的意思：如果遇到和基数相等的值时，左边界直接加一，此时less区域的下一个数和当前边界交换，保证less区域连续
 		}
 		else if (arr[L]>arr[R])
 		{
@@ -1514,7 +1514,7 @@ public:
 		unordered_map<specialListNode*, specialListNode*> map;
 		specialListNode *cur = head;
 		while (cur != nullptr){
-			specialListNode *ptr=new specialListNode;
+		    specialListNode *ptr;//=new specialListNode;
 			ptr->value = cur->value;
 			ptr->next = nullptr;
 			ptr->rand = nullptr;
@@ -1589,7 +1589,7 @@ public:
 //	head->next->next->next->next->next->rand = head->next->next->next; // 6 -> 4
 //	CopyListWithRandom test;
 //	test.printRandLinkedList(head);
-//	head=test.copyListWithRand2(head);
+//	head=test.copyListWithRand1(head);
 //	test.printRandLinkedList(head);
 //}
 
@@ -1799,3 +1799,103 @@ public:
 //}
 
 
+//二叉搜索树变双向链表
+struct TreeNode {
+int val;
+struct TreeNode *left;
+struct TreeNode *right;
+TreeNode(int x) :
+val(x), left(nullptr), right(nullptr) {
+}
+};
+class Solution {
+public:
+	//传统方法 非递归
+	TreeNode* Convert1(TreeNode* pRootOfTree)
+	{
+		if (pRootOfTree == nullptr)
+			return nullptr;
+		TreeNode* p = pRootOfTree;
+		TreeNode* pre = nullptr;
+		stack<TreeNode*>Node;
+		bool isFirst = true;
+		while (p != nullptr || !Node.empty()){
+			while (p != nullptr){
+				Node.push(p);
+				p = p->left;
+			}
+			if (!Node.empty()){
+				p = Node.top();
+				Node.pop();
+			}
+			if (isFirst){
+				pRootOfTree = p;
+				pre = p;
+				// pre->left=nullptr;
+				isFirst = false;
+			}
+			else{
+				pre->right = p;
+				p->left = pre;
+				pre = p;
+
+			}
+			p = p->right;
+		}
+		pre->right=nullptr;
+		return pRootOfTree;
+
+	}
+
+
+
+	//递归，中序遍历
+		TreeNode* Convert(TreeNode* pRootOfTree)
+	{
+		if (pRootOfTree == nullptr) return nullptr;
+		TreeNode* pre = nullptr;
+
+		convertHelper(pRootOfTree, pre);
+
+		TreeNode* res = pRootOfTree;
+		while (res->left)
+			res = res->left;
+		return res;
+	}
+
+	void convertHelper(TreeNode* cur, TreeNode*& pre)
+	{
+		if (cur == nullptr) return;
+
+		convertHelper(cur->left, pre);
+
+		cur->left = pre;
+		if (pre) pre->right = cur;
+		pre = cur;
+
+		convertHelper(cur->right, pre);
+
+
+
+	}
+};
+
+//int main()
+//{
+//	TreeNode *head = new TreeNode(10);
+//	head->left = new TreeNode(6);
+//	head->right = new TreeNode(14);
+//	head->left->left = new TreeNode(4);
+//	head->left->right = new TreeNode(8);
+//	head->right->left = new TreeNode(12);
+//	head->right->right = new TreeNode(16);
+//	Solution test;
+//	TreeNode* result = nullptr;
+//	result=test.Convert(head);
+//	
+//	while (result != nullptr){
+//		cout << result->val<<endl;
+//		result = result->right;
+//	}
+//	
+//}
